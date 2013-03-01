@@ -1,0 +1,49 @@
+\documentclass[11pt]{amsart}
+%\usepackage{geometry}                % See geometry.pdf to learn the layout options. There are lots.
+%\geometry{letterpaper}                   % ... or a4paper or a5paper or ... 
+%\geometry{landscape}                % Activate for for rotated page geometry
+%\usepackage[parfill]{parskip}    % Activate to begin paragraphs with an empty line rather than an indent
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{epstopdf}
+\DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `dirname #1`/`basename #1 .tif`.png}
+
+\title{A practitioner's Guide to Multiplicty Control}
+\author{The Author}
+%\date{}                                           % Activate to display a given date or no date
+
+\begin{document}
+\maketitle
+
+
+\section{Introduction}
+It is quite common for modern research to test many hypotheses simultaneously. The frequentist hypothesis testing framework does not scale in the sense that performing many $\alpha$ level tests will certainly yield many false findings. In order to scale, a researcher has to think of the type or errors he wishes to avoid and select the adequate method for that particular error type and data structure. In this guide, we review several methods (sec \ref{sec:measures_of_error}) and demonstrate their usage in some examples (sec \ref{sec:examples}).
+
+\section{\label{sec:measures_of_error}Measures of Error}
+
+\subsection{Family Wise Error Rates}
+Consider the testing of several null hypotheses against their respective research hypotheses. The Family Wise Error Rate is the frequency of experiments in which a false rejection of a null hypothesis will occur. I.e.- a "false positive" finding will occur.
+Formally: Let $H_{0,i}$, for $i=1,\ldots,n$ be the family of null hypotheses, $T_i$ taking the value of $1$ if the $i$'th null hypothesis is true,  and $R_i$ taking the value $1$ if the $i$'th hypothesis is rejected.
+The FWER is defined as $Prob\{\exists i:T_i=1 \& R_i=1     \}$
+
+\subsection{False Discovery Rates}
+Consider the same setup as in the previous section. The False Detection Rate, first introduced by [cite BH 1995], is the ratio between false discoveries and total discoveries, average over repeating experiments. 
+
+\subsection{Other Measures of Error}
+
+\section{\label{sec:examples}Examples}
+
+\subsection{Tukey's Psychological Exams}
+
+\subsection{Genome Wide Association Studies}
+
+\subsection{Functional Magnetic Resonance Imaging}
+
+\subsection{Electrode Selection in EEG}
+
+\section{A Decision Theory Perspective}
+
+
+
+
+\end{document}  
