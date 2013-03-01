@@ -1,0 +1,21 @@
+\documentclass{article}
+
+\begin{document}
+
+\section*{Introduction}
+
+\subsection*{Family Wise Error Rates}
+
+\subsection*{False Discovery Rates}
+
+\subsection*{Other Measures of Error}
+
+\section*{Examples}
+
+\subsection*{Tukey's Psychological Exams}
+
+\subsection*{Genome Wide Association Studies}
+
+\section*{A Desicision Theory Perspective}
+
+\end{document}
