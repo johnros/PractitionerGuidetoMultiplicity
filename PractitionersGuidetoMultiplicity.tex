@@ -12,7 +12,7 @@
 \usepackage{hyperref}
 \DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `dirname #1`/`basename #1 .tif`.png}
 
-\title{A Practitioner's Guide to Multiplicty Control}
+\title{A Practitioner's Guide to Multiple Testing Error Rates}
 \author{The Author}
 \date{}                                         
 
@@ -61,8 +61,8 @@ Other measures of error include, but not limited to:
 
 Other measures of error which are not simple averages of the loss over replications of the experiment include, but not limited to:
 \begin{itemize}
-\item pFDR [cite Storey 2002] or $FDR_{-1}$ [cite Benjamini 2010] : Defined as $E(V/R;R>0)$.
-\item Fdr [cite Efron 2008] or $FDR_{+1}$ [cite Benjamini 2010]: Defined as $E(V)/E(R)$.
+\item Positive FDR or pFDR [cite Storey 2002] or $FDR_{-1}$ [cite Benjamini 2010] : Defined as $E(V/R;R>0)$.
+\item Marginal FDR [cite Cai and Sun] or Fdr [cite Efron 2008] or $FDR_{+1}$ [cite Benjamini 2010]: Defined as $E(V)/E(R)$.
 \end{itemize}
 
 
@@ -93,6 +93,7 @@ Now consider a different scenario: where the tests check for differences in pers
 Consider now the case of the neuroscientist, trying to locate the brain regions responding to visual stimuli. He will scan a dozen subjects or so in the Magnetic Resonance Imaging (MRI) machine and get the brain's activation\footnote{ He actually measures the blood oxygenation level, but we leave the details for some other day.} To be precise, he will be measuring the activation level at \emph{each} of several thousand brain locations, called Volumetric Picture Elements (voxels). The exact number depending on the MRI's resolution. 
 In the aim of finding "active" locations, the researcher will want to test the null hypothesis of "no response to the stimulus" at each voxel. A mistake would mean he declared a voxels as responsive when it actually is not. This does not seem like a terrible mistake to make so the researcher should probably protect himself from large proportions of errors, but not from the making of one single error. FDR is thus the error measure of choice.
 
+
 \subsubsection{Cluster Level Inference}
 % The case of a random number of hypotheses.
 
@@ -114,7 +115,7 @@ In the converse case, looking to detect which voxels are associated with each SN
 
 In the previous two scenarios, these is still a non-negligible chance of many erroneous findings. To see this, consider the case where there is only one voxel: this case amounts to $n_G$ level $\alpha$ hypothesis tests which is this initial multiplicity problem. Indeed, attention has to be given to the number of families being tested. 
 
-A possible solution might harness the hierarchy of the problem. Say, by aggregating all voxels within each SNP, testing the null hypothesis of no association between each SNP and all voxels, and the "drilling down" only within selected SNPs. Naturally, the multiplicity is alleviated since only selected SNPs will be be passed for voxel-wise testing. Alas, if the same data is used for selecting the SNPs and then selecting the voxels, an $\alpha$ level multiplicity procedure within selected SNPs will still not guarantee $\alpha$ level across discovered $\{SNP\} \times \{voxel\}$ associations.
+A possible solution might harness the hierarchy of the problem. Say, by aggregating all voxels within each SNP, testing the null hypothesis of no association between each SNP and all voxels, and the "drilling down" only within selected SNPs. Naturally, the multiplicity is alleviated since only selected SNPs will be be passed for voxel-wise testing. Alas, if the same data is used for selecting the SNPs and then selecting the voxels, an $\alpha$ level multiplicity procedure within selected SNPs will still not guarantee $\alpha$ level across discovered $\{SNP\} \times \{voxel\}$ associations. This process has been affectionally titled "data snooping" or "double dipping". 
 
 Having given it more thought- our researcher decides she wants a method that controls for the number of falsely discovered SNPs and \emph{simultaneously} for the number of falsely discovered voxels within SNPs. More specifically- she wishes for FDR control over SNPs and for average (over discovered SNPs) FDR control (over discovered voxels). It is time to introduce proper notation.
 
@@ -123,9 +124,16 @@ Let $H^0_{b,g}$ for $b \in B$ and $g \in G$ be the hypothesis of no association 
 Accordingly define $T_{b,g}=1$ if $H^0_{b,g}$ is true and 0 otherwise, and $R_{b,g}=1$ if it is rejected and 0 otherwise. Let $H^0_g$ be the hypothesis of no association between SNP $g$ to \emph{any} voxel: $ H^0_g:= \underset{b\in B}{\cap} H^0_{b,g}$.  
 Accordingly define $T_{g}=1$ if $H^0_{g}$ is true and 0 otherwise, and $R_{g}=1$ if it is rejected and 0 otherwise. 
 Finally, denote by $S$ the index set of SNPs selected for voxel-wise analysis at the first stage, and $\left| S \right|=R_G$ its cardinality. The desired measure of error has two requirements: 
-$$E \left(\frac{V_G}{R_G} \right)\leq \alpha_1 
+
+
+\begin{equation} \label{eq:hirarchial_error}
+ E \left(\frac{V_G}{R_G} \right)\leq \alpha_1 
 \text{ and } 
-E \left( \frac{1}{R_g}\sum_{g} \frac{V_{G,B}}{R_{G,B}} \right)\leq \alpha_2$$
+E \left( \frac{1}{R_g}\sum_{g} \frac{V_{G,B}}{R_{G,B}} \right)\leq \alpha_2
+\end{equation}
+
+
+
 
 Where 
 \begin{align*} 
@@ -142,8 +150,60 @@ The details can be found in [cite Bogomolov and Benjamini 2012].
 
 
 
-\section{A Decision Theory Perspective}
-% Take from Sun & Cai
+\section{Power Considerations}
+The reader might have noted that the different error measures in section~\ref{sec:measures_of_error} care only of the number of false discoveries. Our interest in detection sensitivity is always implicit in the procedures researchers employ. Otherwise, never rejecting any null hypothesis, will trivially control all of the error types in section~\ref{sec:measures_of_error}. 
+The introduction of power considerations has a non trivial effect on the decisions made by the researcher. To see this, consider a scenario where the researcher is certain that if an effect exists, it would be of magnitude $\pm7$ (in some   arbitrary scale, say z-values). Ignoring this belief, will lead the researcher to reject all hypotheses with large (absolute) effects. Particularly, an effect of 20 will be considered very extreme with infinitesimally small p-values. But, when considering the fact that effects are expected to be near 7, the researcher might actually prefer to reject effects near 7 \emph{before} he rejects effects near 20.
+
+To introduce an example of a loss function, we need some notation presented in \ref{tab:event_notation} with which we can consider the following error measure:
+\begin{equation} \label{eq:compound_error}
+min\{mFNR \quad s.t. \quad mFDR\leq \alpha \}
+\end{equation}
+
+where $mFDR=\frac{E(V)}{E(R)}$ captures false positives, and 
+$mFNR=\frac{E(N_{01})}{E(S)}$ captures false negatives.
+
+While eq~\ref{eq:compound_error} is a very appealing error measure indeed, it does suffer from some of the anomalies making the FDR a preferable error measure than mFDR: When all null hypotheses are true, $mFDR$ is identically 1 so that the only procedure that can satisfy $mFDR\leq \alpha$ is the one that never rejects anything. 
+Even so, eq~\ref{eq:compound_error} is a popular measure of error as the finite sample mathematical analysis of other error measure, say $min\{FNR \quad s.t. \quad FDR\leq \alpha \}$ is rather complicated and no agreed upon procedure exists for this case. 
+On the other hand, when dealing very large numbers of hypotheses, some of the difficulties of the finite case are eschewed: The probability of no rejections vanishes, so that FDR, pFDR and mFDR coincide. 
+
+
+
+[cite Sun and Cai 2007] show that a multiplicity control procedure that satisfies the error in eq~\ref{eq:compound_error} is equivalent to finding a decision rule which, with an appropriately chosen $\lambda$, minimises a risk of the form:
+\begin{equation} \label{eq:multiplicity_risk}
+E \left( \frac{1}{m} \left( \lambda N_{01} + N_{10}   \right)   \right)
+\end{equation}
+
+Seen as a decision theory problem, one can call upon the extensive decision theory literature, in the hope of finding either optimal procedures, or at least admissible\footnote{Procedures that are not uniformly dominated by other procedures} procedures. 
+
+
+An error measure such as in eq~\ref{eq:compound_error} 
+[TODO: admisibility as criteria of interest only asymptotic results + storey].
+
+
+
+
+
+
+\begin{table}
+  \centering
+\begin{tabular}{|c|c|c|c|}
+\hline \rule[-1ex]{0pt}{1.5ex} • & Claimed nonsignificant & Claimed Significant & Total \\ 
+\hline
+\hline \rule[-1ex]{0pt}{1.5ex} Null & $N_{00}$ & $N_{10}$ & $m_0$ \\ 
+\hline \rule[-1ex]{0pt}{1.5ex} Nonnull & $N_{01}$ & $N_{11}$ & $m_1$ \\ 
+\hline \rule[-1ex]{0pt}{1.5ex} Total & $S$ & $R$ & $m$ \\ 
+\hline 
+\end{tabular} 
+  \caption{Classification of types of decisions made}
+  \label{tab:event_notation}
+\end{table}
+
+
+
+
+
+
+
 
 
 
