@@ -24,35 +24,35 @@
 
 \section{Introduction}
 
-It is quite common for modern research to test many hypotheses simultaneously. The frequentist hypothesis testing framework does not scale with the number of hypotheses in the sense that performing many $\alpha$ level tests will certainly yield many false findings. In order to scale, a researcher has to think of the type or errors he wishes to avoid and select the adequate method for that particular error type and data structure. A quick search of the tag \emph{[multiple-comparisons]} in the statistics Questions \& Answers web site \href{http://stats.stackexchange.com}{Cross Validated}, demonstrates the amount of confusion this task can actually cause. This was also the point made in \citep[see][section 4.4]{benjamini_simultaneous_2010}. 
-In an attempt to offer guidance at this important task, we review some possible error types for simultaneous inference (sec \ref{sec:measures_of_error}) and demonstrate them with some examples (sec \ref{sec:examples}). We also include some notes on the software implementing these procedures in appendix~\ref{sec:on_your_pc}.
+It is quite common for modern research to test many hypotheses simultaneously. The frequentist hypothesis testing framework does not scale with the number of hypotheses in the sense that performing many $\alpha$ level tests will certainly yield many false findings. In order to scale, a researcher has to think of the type or errors he wishes to avoid and select the adequate procedure for that particular error type and data structure. A quick search of the tag \emph{[multiple-comparisons]} in the statistics Questions \& Answers web site \href{http://stats.stackexchange.com}{Cross Validates} demonstrates the amount of confusion this task can actually cause. This was also the point made in \citet[][section 4.4]{benjamini_simultaneous_2010}. 
+In an attempt to offer guidance, we review possible error types for simultaneous inference (sec \ref{sec:measures_of_error}) and demonstrate them with some examples (sec \ref{sec:examples}). We also include some notes on the software implementing these procedures in appendix~\ref{sec:on_your_pc}.
 
-The emphasis of this manuscript is on the error rates, and not on the procedures themselves. For the purpose of selecting the precise procedure, \citet{farcomeni_review_2008} can serve as a good review. We do however mention several procedures where appropriate.  Simultaneous confidence intervals and p-value adjustment will also not be discusses as they are procedure specific. I.e., it is the choice of a procedure that defines the p-value adjustment and the confidence intervals, and not the error rate itself.
+The emphasis of this manuscript is on the error rates, and not on the procedures themselves. For the purpose of selecting the precise procedure, \citet{farcomeni_review_2008} can serve as a good reference. We do however try to mention several procedures where appropriate.  Simultaneous confidence intervals and p-value adjustment will not be discusses as they are procedure specific. I.e., it is the choice of a procedure that defines the p-value adjustment and the confidence intervals, and not the error rate itself.
 
 
 \section{\label{sec:measures_of_error}Measures of Error}
 
 \subsection{Family Wise Error Rates}
-Consider the testing of several null hypotheses against their respective research hypotheses. The Family Wise Error Rate (FWER) is the frequency of experiments in which a false rejection of a null hypothesis will occur. I.e.- a "false positive" finding will occur.
+Consider the testing of several null hypotheses against their respective research (alternative) hypotheses. The Family Wise Error Rate (FWER) is the frequency of experiments in which a false rejection of a null hypothesis will occur. I.e.- a ``false positive'' finding will occur.
 Formally: Let $H^0_i$, for $i=1,\ldots,n$ be the family of null hypotheses, $T_i$ taking the value of $1$ if the $i$'th null hypothesis is true and 0 otherwise,  and $R_i$ taking the value $1$ if the $i$'th hypothesis is rejected and 0 otherwise.
 The FWER is defined as $Prob\{\exists i:T_i=1 \& R_i=1  \}$
 
 \subsection{False Discovery Rates}
-Consider the same setup as in the previous section. The False Detection Rate (FDR), first introduced by \citet{benjamini_controlling_1995}, is the average (over replicated experiments) ratio between false discoveries and total discoveries.
-Formally: Let $R=\sum_i{R_i}$ be the number of hypothesis rejected and $V$ be the number of \emph{falsly} rejected hypotheses. I.e., $V=\sum_i{R_i \cdot T_i}$. Deciding that no rejections means no error\footnote{ From here onward, we will recall that $V=0 \Rightarrow V/R=0$ without mentioning it explicitly.}, i.e.  $V=0 \Rightarrow V/R=0$, then the FDR is defined as $$E \left( \frac{V}{R} \right)$$
+Consider the same setup as in the previous section. The False Discovery Rate (FDR), first introduced by \citet{benjamini_controlling_1995}, is the average ratio between false discoveries and total discoveries over replicated experiments.
+Formally: Let $R=\sum_i{R_i}$ be the number of rejected hypothesis and $V$ be the number of \emph{falsly} rejected hypotheses. I.e., $V=\sum_i{R_i \cdot T_i}$. Defining that no rejections means no error\footnote{ From here onward, we will recall that $R=0 \Rightarrow V/R=0$ without mentioning it explicitly.} then the FDR is defined as $$E \left( \frac{V}{R} \right)$$
 
 Remarks:
 \begin{itemize}
+\item The FDR error rate has become synonymous with the Benjamini-Hochberg procedure presented in \citet{benjamini_controlling_1995} . This is plain wrong.
 \item In the context of FDR, the $\alpha \leq 0.05$ convention has not been fixed, and there is definite room for judgement as to the appropriate error rate for a specific problem.
-\item The FDR error rate has become synonymous with the Benjamini-Hochberg procedure. This is plain wrong as they should be distinguished.
 \end{itemize}
 
 
 
 
 \subsection{Other Measures of Error}
-The measures of error above are the most commonly used, and for good reason, but by no means the only ones. Since an error measure is merely an expected loss over replications of the experiment, they can be expressed in the form $E(C)$ for some loss function $C$. In the cases of FWER and FDR $C = I_{\{ V \geq 1 \} } $ and $C = V/R$ respectively.
-Other measures of error include, but not limited to:
+The measures of error above are the most commonly used, and for good reason, but by no means the only ones. Since an error measure is merely an expectation over replications of the experiment, they can be expressed in the form $E(C)$ for some function $C$. In the cases of FWER and FDR $C = I_{\{ V \geq 1 \} } $ and $C = V/R$ respectively.
+Other measures of error include, but are not limited to:
 
 \begin{itemize}
 \item Per Comparison Error Rate (PCER): Where $C=V/n$.
@@ -62,7 +62,7 @@ Other measures of error include, but not limited to:
 \end{itemize}
 
 
-Other measures of error which are not simple averages of the loss over replications of the experiment include, but not limited to:
+Other measures of error which are not simple averages over replications of the experiment include, but are not limited to:
 \begin{itemize}
 \item Positive FDR or pFDR \citep{storey_direct_2002} or $FDR_{-1}$ \citep{benjamini_discovering_2010} : Defined as $E(V/R;R>0)$.
 \item Marginal FDR \citep{sun_oracle_2007} or Fdr \citep{efron_microarrays_2008} or $FDR_{+1}$ \citep{benjamini_discovering_2010}: Defined as $E(V)/E(R)$.
@@ -72,7 +72,7 @@ Other measures of error which are not simple averages of the loss over replicati
 
 
 \subsection{Choosing Your Family}
-All the previous error measures assume that the family of hypotheses is known. As a researcher, defining the family is not an obvious task. The examples in section~\ref{sec:examples} included some trivial scenarios, in the sense the the family of hypotheses is obvious. The section also include some examples where the family is not trivial (sections \ref{eg:electrode_selection} and \ref{eg:imaging_genetics}) and it's choice will depend of the scientific statement the researcher is wishes to make.
+All the previous error measures assume that the family of hypotheses is known. As a researcher, defining the family is not an obvious task. The examples in section~\ref{sec:examples} included some trivial scenarios, in the sense the the family of hypotheses is clear. The section also include some examples where the family is not trivial (section \ref{eg:imaging_genetics}) and its choice will depend of the scientific in mind.
 
 
 
@@ -82,27 +82,32 @@ All the previous error measures assume that the family of hypotheses is known. A
 
 
 \subsection{Tukey's Psychological Exams}
-In his 1953 unpublished paper: "The Problem of Multiple Comparisons" \citep{benjamini_john_2002} and later, when lecturing at Princeton University \citet{donoho_higher_2004}, Prof. John Tukey would tell the tale of a young psychologist. After administering 250 tests he finds that 11 were significant at the 0.05 level. After the initial feeling of satisfaction he consults a senior researcher, only to discover his findings are rather poor: One would expect 12.5 significant tests due to chance alone. Only 11 significant results is nothing to write home about.
+In his 1953 unpublished paper: ``The Problem of Multiple Comparisons'' \citep{benjamini_john_2002} and later, when lecturing at Princeton University \citet{donoho_higher_2004}, Prof. John Tukey would tell the tale of a young psychologist. After administering 250 tests he finds that 11 were significant at the 0.05 level. After the initial feeling of satisfaction he consults a senior researcher, only to discover his findings are rather poor as one  would expect 12.5 significant tests due to chance alone. Only 11 significant results is actually disappointing.
 
 
 With his new understanding, our psychologist now has to decide how should he protect himself from false findings? 
-Say the tests consist of new candidate clinical diagnostics for condition X. Making an error means that a test will be used to diagnose X while it actually cannot distinguish between healthy and X. Since this is unacceptable for our psychologist, he will want an inference procedure that controls the FWE. If Tukey's example, the tests are independent, so he could consider, say Sidak's procedure or Holm's procedure [what to cite? original papers not instructive enough. Hochberg's book? which page?].
+Say the tests consist of new candidate clinical diagnostics for condition X. Making an error means that a test will be used to diagnose X while it actually cannot distinguish between healthy and X. Since this is unacceptable for our psychologist, he will want an inference procedure that controls the FWE. In Tukey's example, the tests are independent, so he could consider, say Sidak's procedure or Holm's procedure [what to cite? original papers not instructive enough. Hochberg's book? which page?].
 
-Now consider a different scenario: where the tests check for differences in personality attributes between genders. Making an error means that the psychologist will believe male and female differ in a way they actually do not. The researcher does not consider this a serious mistake, as long as there are many other discovered differences. In this setup, the researcher should control the FDR-- probably using the Benjamini-Hochberg method \citep{benjamini_controlling_1995}. Allowing for some mistakes will allow the researcher to enjoy a sensitivity gain compared to FWER methods.
+Now consider a different scenario: The tests check for differences in personality attributes between genders. Making an error means that the psychologist might believe male and female differ in a way they actually do not. The researcher does not consider this a serious mistake, as long as many other true differences are discovered. In this setup, the researcher should control the FDR-- probably using the Benjamini-Hochberg procedure \citep{benjamini_controlling_1995}. Allowing for some mistakes will allow the researcher to enjoy a sensitivity gain compared to FWER-controlling-procedures.
+
+
+\subsection{ANOVA}
+% Should this be included? If so, I need a good story.
+
 
 
 \subsection{Functional Magnetic Resonance Imaging}
 \subsubsection{Voxel Level Inference}
-Consider now the case of the neuroscientist, trying to locate the brain regions responding to visual stimuli. He will scan a dozen subjects or so in the Magnetic Resonance Imaging (MRI) machine and get the brain's activation\footnote{ He actually measures the blood oxygenation level, but we leave the details for some other day.} To be precise, he will be measuring the activation level at \emph{each} of several thousand brain locations, called Volumetric Picture Elements (voxels). The exact number depending on the MRI's resolution. 
-In the aim of finding "active" locations, the researcher will want to test the null hypothesis of "no response to the stimulus" at each voxel. A mistake would mean he declared a voxels as responsive when it actually is not. This does not seem like a terrible mistake to make so the researcher should probably protect himself from large proportions of errors, but not from the making of one single error. FDR is thus the error measure of choice.
+Consider now the case of the neuroscientist, trying to locate the brain regions responsive to visual stimuli. He will scan a dozen subjects or so in the Magnetic Resonance Imaging (MRI) machine and get the brain's activation\footnote{ He actually measures the blood oxygenation level. Details can be found in \cite{lazar_statistical_2008}.} To be precise, he will be measuring the activation level at \emph{each} of several thousand brain locations, called Volumetric Picture Elements (voxels). The exact number depending on the MRI's resolution. 
+In the aim of finding ``active'' locations, the researcher will want to test the null hypothesis of no response to the stimulus, at each voxel. A mistake would mean he declared a voxels as responsive when it actually is not. This does not seem like a terrible mistake to make so the researcher should probably protect himself from large proportions of errors, and not from the making of one single error. FDR is thus the error measure of choice.
 
 
 \subsubsection{Cluster Level Inference}
-% The case of a random number of hypotheses.
+[TODO]
 
 
 \subsection{Genome Wide Association Studies}
-In a typical Genome Wide Association Study (GWAS) the geneticist will record the genetic information of many subjects (genotyping) with the aim of discovering associations between the genotype and the individuals' attributes (phenotype). Assuming a univariate phenotype, the researcher will perform some sort of regression between the phenotype and each DNA location (SNP). With today’s technology, the number of SNPs considered in a typical GWAS is in the hundreds of thousands. To declare an association, a researcher will try to reject the "no association" hypothesis between \emph{each} SNP and the phenotype, leading to the simultaneous testing of several hundreds of thousands of hypotheses. Since the researcher does not concern himself with the making of a mistake, as long as other associations discovered as true, he will choose FDR control. Probably using the Benjamini-Hochberg procedure.
+In a typical Genome Wide Association Study (GWAS) the geneticist will record the genetic information of many subjects (genotyping) with the aim of discovering associations between the genotype and the individuals' attributes (phenotype). Assuming a univariate phenotype, the researcher will perform some sort of regression between the phenotype and each DNA location (SNP). With today’s technology, the number of SNPs considered in a typical GWAS is in the hundreds of thousands. To declare an association, a researcher will try to reject the no association hypothesis between \emph{each} SNP and the phenotype, leading to the simultaneous testing of several hundreds of thousands of hypotheses. Since the researcher does not concern himself with the making of a mistake, as long as other associations discovered as true, he will choose FDR control. Probably using the Benjamini-Hochberg procedure.
 
 
 % Is another FWER example needed? Maybe ANOVA? Examples from Donoho & Jin 2004?
@@ -118,7 +123,7 @@ In the converse case, looking to detect which voxels are associated with each SN
 
 In the previous two scenarios, these is still a non-negligible chance of many erroneous findings. To see this, consider the case where there is only one voxel: this case amounts to $n_G$ level $\alpha$ hypothesis tests which is this initial multiplicity problem. Indeed, attention has to be given to the number of families being tested. 
 
-A possible solution might harness the hierarchy of the problem. Say, by aggregating all voxels within each SNP, testing the null hypothesis of no association between each SNP and all voxels, and the "drilling down" only within selected SNPs. Naturally, the multiplicity is alleviated since only selected SNPs will be be passed for voxel-wise testing. Alas, if the same data is used for selecting the SNPs and then selecting the voxels, an $\alpha$ level multiplicity procedure within selected SNPs will still not guarantee $\alpha$ level across discovered $\{SNP\} \times \{voxel\}$ associations. This is actually a case of \emph{selective inference}, cynically referred to as "data snooping" or "double dipping". 
+A possible solution might harness the hierarchy of the problem. Say, by aggregating all voxels within each SNP, testing the null hypothesis of no association between each SNP and all voxels, and the ``drilling down'' only within selected SNPs. Naturally, the multiplicity is alleviated since only selected SNPs will be be passed for voxel-wise testing. Alas, if the same data is used for selecting the SNPs and then selecting the voxels, an $\alpha$ level multiplicity procedure within selected SNPs will still not guarantee $\alpha$ level across discovered $\{SNP\} \times \{voxel\}$ associations. This is actually a case of \emph{selective inference}, affectionately  referred to as ``data snooping'' or ``double dipping''. 
 
 Having given it more thought- our researcher decides she wants a method that controls for the number of falsely discovered SNPs and \emph{simultaneously} for the number of falsely discovered voxels within SNPs. More specifically- she wishes for FDR control over SNPs and for average (over discovered SNPs) FDR control (over discovered voxels). It is time to introduce proper notation.
 
