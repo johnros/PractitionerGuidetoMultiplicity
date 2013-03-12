@@ -4,4 +4,6 @@
 .project
 *.aux
 *.log
+*.bbl
+*.blg
 PractitionersGuidetoMultiplicity.pdf
