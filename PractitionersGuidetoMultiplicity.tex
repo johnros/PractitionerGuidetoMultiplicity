@@ -116,17 +116,15 @@ In a typical Genome Wide Association Study (GWAS) the geneticist will record the
 \subsection{\label{eg:imaging_genetics}Imaging Genetics}
 The field of imaging genetics, aims at finding the genetic attributes associates with phenotypes derived from medical imaging. In a pioneering study, \citet{stein_voxelwise_2010} set out to find the genetic variation associated with local brain volume, under the paradigm that different genes affect different brain regions. The data included the genotyping and imaging of about $N=700$ individuals. The genotype of each individual comprises of information about close to $n_G=400K$ SNPs. The imaging data encodes the relative volume of each subject at $n_B=30K$ brain locations (voxels). The $n_G \cdot n_B=1.2B$ hypotheses pose a computational challenge, but it is their logical structure that poses a conceptional challenge: what should be a considered as a family of hypotheses?
 
-A researcher might want to infer which gene is associated with which location? This single family of hypotheses will include all $\{SNP\} \times \{voxel\}$ combinations. FDR control over this family, means that researcher is concerned with the proportion of false association detected within all of the $\{SNP\} \times \{voxel\}$ associations found. Our researcher is very much aware of the fact she will have to correct for $1.2B$ hypotheses and starts considering alternative approaches. A natural option might be of testing SNP-wise. This would require correcting for $n_B$ voxel in each of the $n_G$  families tested. Power will certainly be gained by this approach, as the correction is performed only for $n_B$ hypotheses at a time, but what about false findings? 
+A researcher might want to infer which gene is associated with which location? This single family of hypotheses will include all $\{SNP\} \times \{voxel\}$ combinations. FDR control over this family, means that researcher is concerned with the proportion of false association detected within all of the $\{SNP\} \times \{voxel\}$ associations found. Our researcher is very much aware of the fact she will have to correct for $1.2B$ hypotheses and starts considering alternative approaches. A natural option might be of testing SNP-wise. This would require correcting for $n_B$ voxel in each of the $n_G$  families tested. Power will certainly be gained by this approach, as the correction is performed only for $n_B$ hypotheses at a time, but what about false findings? Sadly, these is still a non-negligible chance of many erroneous findings. To see this, consider the case where there is only one voxel: this amounts to $n_G$ level $\alpha$ hypothesis tests which is this initial multiplicity problem. Indeed, attention has to be given to the number of families being tested. 
 
-In the previous two scenarios, these is still a non-negligible chance of many erroneous findings. To see this, consider the case where there is only one voxel: this case amounts to $n_G$ level $\alpha$ hypothesis tests which is this initial multiplicity problem. Indeed, attention has to be given to the number of families being tested. 
+A possible solution might harness the hierarchy of the problem. Say, by aggregating all voxels within each SNP, testing the null hypothesis of no association between each SNP and \emph{all} voxels, and then ``drilling down'' within selected SNPs. Naturally, the multiplicity is alleviated since only selected SNPs will be be passed for voxel-wise testing. Alas, if the same data is used for selecting the SNPs and then selecting the voxels, an $\alpha$ level error within selected SNPs will still not guarantee $\alpha$ level across discovered $\{SNP\} \times \{voxel\}$ associations. This is actually a case of \emph{selective inference}, affectionately  referred to as ``data snooping'' or ``double dipping''. 
 
-A possible solution might harness the hierarchy of the problem. Say, by aggregating all voxels within each SNP, testing the null hypothesis of no association between each SNP and all voxels, and the ``drilling down'' only within selected SNPs. Naturally, the multiplicity is alleviated since only selected SNPs will be be passed for voxel-wise testing. Alas, if the same data is used for selecting the SNPs and then selecting the voxels, an $\alpha$ level multiplicity procedure within selected SNPs will still not guarantee $\alpha$ level across discovered $\{SNP\} \times \{voxel\}$ associations. This is actually a case of \emph{selective inference}, affectionately  referred to as ``data snooping'' or ``double dipping''. 
-
-Having given it more thought- our researcher decides she wants a method that controls for the number of falsely discovered SNPs and \emph{simultaneously} for the number of falsely discovered voxels within SNPs. More specifically- she wishes for FDR control over SNPs and for average (over discovered SNPs) FDR control (over discovered voxels). It is time to introduce proper notation.
+Having given it more thought- our researcher decides she wants a method that controls for the number of falsely discovered SNPs and \emph{simultaneously} for the number of falsely discovered voxels within SNPs. More specifically- she wishes for FDR control over SNPs, and for average-- over discovered SNPs-- FDR control over discovered voxels. This might be a good time to introduce proper notation.
 
 
 Let $H^0_{b,g}$ for $b \in B$ and $g \in G$ be the hypothesis of no association between voxel $b$ and SNP $g$. 
-Accordingly define $T_{b,g}=1$ if $H^0_{b,g}$ is true and 0 otherwise, and $R_{b,g}=1$ if it is rejected and 0 otherwise. Let $H^0_g$ be the hypothesis of no association between SNP $g$ to \emph{any} voxel: $ H^0_g:= \underset{b\in B}{\cap} H^0_{b,g}$.  
+Define $T_{b,g}=1$ if $H^0_{b,g}$ is true and 0 otherwise, and $R_{b,g}=1$ if it is rejected and 0 otherwise. Let $H^0_g$ be the hypothesis of no association between SNP $g$ to \emph{any} voxel: $ H^0_g:= \underset{b\in B}{\cap} H^0_{b,g}$.  
 Accordingly define $T_{g}=1$ if $H^0_{g}$ is true and 0 otherwise, and $R_{g}=1$ if it is rejected and 0 otherwise. 
 Finally, denote by $S$ the index set of SNPs selected for voxel-wise analysis at the first stage, and $\left| S \right|=R_G$ its cardinality. The desired measure of error has two requirements: 
 
@@ -134,7 +132,7 @@ Finally, denote by $S$ the index set of SNPs selected for voxel-wise analysis at
 \begin{equation} \label{eq:hirarchial_error}
  E \left(\frac{V_G}{R_G} \right)\leq \alpha_1 
 \text{ and } 
-E \left( \frac{1}{R_g}\sum_{g} \frac{V_{G,B}}{R_{G,B}} \right)\leq \alpha_2
+E \left( \frac{1}{R_g}\sum_{g \in S} \frac{V_{g,B}}{R_{g,B}} \right)\leq \alpha_2
 \end{equation}
 
 
@@ -144,11 +142,11 @@ Where
 \begin{align*} 
    R_G = {}& \sum_{g \in G} R_g \\
    V_G = {}& \sum_{g \in G} R_g \cdot T_g \\
-   R_{G,B} = {}& \sum_{g \in S} \sum_{b \in B} R_{b,g}\\
-   V_{G,B} = {}& \sum_{g \in S} \sum_{b \in B} R_{b,g} \cdot T_{b,g}  \\
+   R_{g,B} = {}& \sum_{b \in B} R_{b,g}\\
+   V_{g,B} = {}& \sum_{b \in B} R_{b,g} \cdot T_{b,g}  \\
 \end{align*}
 
-Is there a procedure that controls this type of error? While novel and under active research, at the time of writing there is indeed such procedure, at least for the independent test-statistics scenario. It has two stages. 
+Is there a procedure that controls this type of error? While novel and under active research, there is indeed one such procedure at the time of writing, for the independent test-statistics scenario. It has two stages: 
 First, the omnibus-stage:  testing $\{H^0_{g}\}_{g \in G}$ by aggregating voxels within each SNP and controlling for the number of SNPs tested. Second, the post-hoc stage: drilling into the selected SNPs searching for associated voxels. Controlling for the number of voxels, but with a conservative error rate which accounts for the SNP selection stage. 
 The details can be found in \citet{benjamini_adjusting_2011}.
 
@@ -157,11 +155,11 @@ The details can be found in \citet{benjamini_adjusting_2011}.
 
 \section{Power Considerations}
 The reader might have noted that the different error measures in section~\ref{sec:measures_of_error} care only of the number of false discoveries. Our interest in detection sensitivity is naturally implicit in the procedures researchers employ. Otherwise, never rejecting any null hypothesis, will trivially control all of the error types in section~\ref{sec:measures_of_error}. 
-The introduction of power considerations requires the consideration of the expected deviation from the null hypotheses. To see this, consider a scenario where the researcher is certain that if an effect exists, it would be of magnitude $\pm7$ (in some arbitrary scale, say z-values). Ignoring this belief, will lead the researcher to reject all hypotheses with large (absolute) effects. Particularly, an effect of, say 20,  will be considered very extreme, with infinitesimally small p-values. But, when considering the fact that effects are expected to be near 7, the researcher might actually prefer to reject effects near 7 \emph{before} he rejects effects near 20. 
+The introduction of power requires the consideration of the expected deviation from the null hypotheses. To see this, consider a scenario where the researcher is certain that if an effect exists, it would be of magnitude $\pm7$ (in some arbitrary scale, say z-values). Ignoring this belief, will lead the researcher to reject all hypotheses with large (absolute) effects. Particularly, an effect of, say 20,  will be considered very extreme, with infinitesimally small p-values. But, when considering the fact that effects are expected to be near 7, the researcher might actually prefer to reject effects near 7 \emph{before} he rejects effects near 20. 
 
-Specifying the expected deviation from the null for each hypothesis tested is no easy task. There exist however, several procedures which use the multitude of hypotheses tested in an attempt to empirically recognise the deviations from the null, and harness this information. The most popular rely on estimators of the probability of a hypothesis being a true null given the value of the test statistic (denoted $fdr(z_i)$) or the tail values of the test statistic (denoted $Fdr(z_i)$). The details can be found in \cite{efron_microarrays_2008}. Note however, that these are not error measures but rather procedures relying on test statistics other than p-values.  
+Specifying the expected deviation from the null for each hypothesis tested is no easy task. There exist however, several procedures which use the multitude of hypotheses tested in an attempt to empirically characterize the deviations from the null, and harness this information. The most popular rely on estimators of the probability of a hypothesis being a true null given the value of the test statistic (denoted $fdr(z_i)$) or the tail values of the test statistic (denoted $Fdr(z_i)$). The details can be found in \cite{efron_microarrays_2008}. Note however, that these are not error measures but rather procedures relying on test statistics other than p-values.  
 
-The above procedures have been shown to have many desirable properties for several error measures of interest. In order to introduce an example of such an error function, we need some more notation, presented in table~\ref{tab:event_notation}, with which we can consider the following measure:
+The above procedures have been shown to have many desirable properties for several error measures of interest. In order to introduce an example of such an error measure, we need some more notation, presented in table~\ref{tab:event_notation}, with which we can consider the following measure:
 \begin{equation} \label{eq:compound_error}
 min\{mFNR \quad s.t. \quad mFDR\leq \alpha \}
 \end{equation}
@@ -169,9 +167,9 @@ min\{mFNR \quad s.t. \quad mFDR\leq \alpha \}
 where $mFDR=\frac{E(V)}{E(R)}$ captures false positives, and 
 $mFNR=\frac{E(N_{01})}{E(S)}$ captures false negatives.
 
-While eq~\ref{eq:compound_error} is a very appealing error measure, as it implicitly introduces the desire for powerful tests, it does suffer from some of the anomalies making the FDR a preferable error measure than mFDR: When all null hypotheses are true, $mFDR$ is identically 1 so that the only procedure that can satisfy $mFDR\leq \alpha$ is the one that never rejects anything. This caveat is eschewed by adding some (possibly debatable) technical assumptions, but mostly by considering scenarios with infinitely many hypotheses being tested. Nevertheless, whatever the error measure may be, there is no escaping the growing popularity of these procedures, which show good properties in simulations and application \cite{efron_microarrays_2008}.
+While eq~\ref{eq:compound_error} is a very appealing error measure, as it explcitly introduces the desire for powerful tests, it does suffer from some of the anomalies making the FDR a preferable error measure than mFDR: When all null hypotheses are true, $mFDR$ is identically 1 so that the only procedure that can satisfy $mFDR\leq \alpha <1$ is the one that never rejects anything. This caveat is eschewed by adding some (possibly debatable) technical assumptions, but mostly by considering scenarios with infinitely many hypotheses being tested. Nevertheless, whatever the error measure may be, there is no escaping the growing popularity of these procedures, which show good properties in simulations and application \citep[example][]{efron_microarrays_2008}.
 
-The search for procedures with desirable properties under errors measures such as eq~\ref{eq:compound_error}, is ongoing. It is an active field of investigation with beautiful theory, either developed by the Multiple Comparisons community or borrowing fro statistical decision theory (\cite[see]{sun_oracle_2007}). The analysis of the finite-sampling properties of suggested procedures with respect to some desirable error measures is not an easy task. Hopefully, in the near future more error measures will be accompanied with their controlling procedures so that researcher will be able to choose a tailored tool for the inference they wish to make.
+The search for procedures with desirable properties under errors measures such as eq~\ref{eq:compound_error}, is ongoing. It is an active field of investigation with beautiful theory, either developed by the Multiple Comparisons community or borrowing from statistical decision theory (\cite[see][]{sun_oracle_2007}). The analysis of the finite-sampling properties of suggested procedures with respect to some desirable error measures is not an easy task. Hopefully, in the near future more error measures will be accompanied by appropriate controlling procedures so that researcher will be able to choose a tailored tool for the inference they wish to make.
 
 
 \begin{table}
@@ -194,8 +192,7 @@ The search for procedures with desirable properties under errors measures such a
 
 
 \section{Acknowledgments}
-% Kornelius
-% Yoav
+% Yoav?
 
 
 
@@ -204,10 +201,12 @@ The search for procedures with desirable properties under errors measures such a
 \section{\label{sec:on_your_pc} On Your Computer}
 It does not suffice to choose an error measure in order to perform an analysis. An error-controlling procedure will also have to be chosen, and this is what you should look for in your favourite software. 
 
-In the R programming environment \citep{r_development_core_team_r:_2011} the function \emph{p.adjust} in the \emph{stats} package will allow to perform the most common procedures. The references in the function documentation are a good starting point for learning about these procedures. For FWER controlling procedures, in particular in the context of linear contrasts in regression models, the \emph{multcomp} package is a very good option. For procedures more sophisticated than Benjamini-Hochberg, many packages have been written. We will give references nor recommendations due to their fast rate of change. 
+In the R programming environment \citep{r_development_core_team_r:_2011} the function \emph{p.adjust} in the \emph{stats} package will allow to perform the most common procedures. The references in the function documentation are a good starting point for learning about these procedures. For FWER controlling procedures, in particular in the context of linear contrasts in regression models, the \emph{multcomp} package is a very good option. For newer, many packages have been written. Due to their fast rate of change we will not try to give references nor recommendations, and leave that to your favourite web search engine . 
 We also note that the hierarchal testing scheme in section~\ref{eg:imaging_genetics} has not been implemented to the best of our knowledge. Its implementation would require a new syntax to describe the hypotheses' hierarchy (families) and is an open challenge. 
 
-In SAS, multiple testing procedures are incorporated within PROC MIXED and also in PROC MULTEST.  The canonical reference is \citet{westfall_multiple_2011}. In SPSS, multiplicity corrections are typically found as part of the \emph{post-hoc} options of the analysis methods.
+In SAS, multiple testing procedures are incorporated within PROC MIXED and also in PROC MULTEST.  The canonical reference is \citet{westfall_multiple_2011}. 
+
+In SPSS, multiplicity corrections are typically found as part of the \emph{post-hoc} options of the analysis methods.
 
 
 
