@@ -27,19 +27,19 @@
 It is quite common for modern research to test many hypotheses simultaneously. The frequentist hypothesis testing framework does not scale with the number of hypotheses in the sense that performing many $\alpha$ level tests will certainly yield many false findings. In order to scale, a researcher has to think of the type or errors he wishes to avoid and select the adequate procedure for that particular error type and data structure. A quick search of the tag \emph{[multiple-comparisons]} in the statistics Questions \& Answers web site \href{http://stats.stackexchange.com}{Cross Validates} demonstrates the amount of confusion this task can actually cause. This was also the point made in \citet[][section 4.4]{benjamini_simultaneous_2010}. 
 In an attempt to offer guidance, we review possible error types for simultaneous inference (sec \ref{sec:measures_of_error}) and demonstrate them with some examples (sec \ref{sec:examples}). We also include some notes on the software implementing these procedures in appendix~\ref{sec:on_your_pc}.
 
-The emphasis of this manuscript is on the error rates, and not on the procedures themselves. For the purpose of selecting the precise procedure, \citet{farcomeni_review_2008} can serve as a good reference. We do however try to mention several procedures where appropriate.  Simultaneous confidence intervals and p-value adjustment will not be discusses as they are procedure specific. I.e., it is the choice of a procedure that defines the p-value adjustment and the confidence intervals, and not the error rate itself.
+The emphasis of this manuscript is on the error rates, and not on the procedures themselves. For the purpose of selecting the precise procedure, \citet{farcomeni_review_2008} can serve as a good reference. We do however try to mention several procedures where appropriate.  Simultaneous confidence intervals and p-value adjustment will not be discussed as they are procedure specific. I.e., it is the choice of a procedure that defines the p-value adjustment and the confidence intervals, and not the error rate itself.
 
 
 \section{\label{sec:measures_of_error}Measures of Error}
 
 \subsection{Family Wise Error Rates}
-Consider the testing of several null hypotheses against their respective research (alternative) hypotheses. The Family Wise Error Rate (FWER) is the frequency of experiments in which a false rejection of a null hypothesis will occur. I.e.- a ``false positive'' finding will occur.
+Consider the testing of several null hypotheses against their respective research (alternative) hypotheses. The Family Wise Error Rate (FWER) is the frequency of experiments in which a false rejection of a null hypothesis will occur. I.e., a ``false positive'' finding will occur.
 Formally: Let $H^0_i$, for $i=1,\ldots,n$ be the family of null hypotheses, $T_i$ taking the value of $1$ if the $i$'th null hypothesis is true and 0 otherwise,  and $R_i$ taking the value $1$ if the $i$'th hypothesis is rejected and 0 otherwise.
 The FWER is defined as $Prob\{\exists i:T_i=1 \& R_i=1  \}$
 
 \subsection{False Discovery Rates}
 Consider the same setup as in the previous section. The False Discovery Rate (FDR), first introduced by \citet{benjamini_controlling_1995}, is the average ratio between false discoveries and total discoveries over replicated experiments.
-Formally: Let $R=\sum_i{R_i}$ be the number of rejected hypothesis and $V$ be the number of \emph{falsly} rejected hypotheses. I.e., $V=\sum_i{R_i \cdot T_i}$. Defining that no rejections means no error\footnote{ From here onward, we will recall that $R=0 \Rightarrow V/R=0$ without mentioning it explicitly.} then the FDR is defined as $$E \left( \frac{V}{R} \right)$$
+Formally: Let $R=\sum_i{R_i}$ be the number of rejected hypothesis and $V$ be the number of \emph{falsly} rejected hypotheses. I.e., $V=\sum_i{R_i \cdot T_i}$. Defining that no rejections means no error\footnote{ From here onward, we will recall that $R=0 \Rightarrow V/R=0$ without mentioning it explicitly.} then the FDR is defined as $$E \left( \frac{V}{R} \right).$$
 
 Remarks:
 \begin{itemize}
@@ -57,8 +57,8 @@ Other measures of error include, but are not limited to:
 \begin{itemize}
 \item Per Comparison Error Rate (PCER): Where $C=V/n$.
 \item Per Family Error Rate (PFER): Where $C=V$.
-\item False Discovery Exceedance (FDX)\citep{genovese_exceedance_2006}: Where $C(\gamma) = I_{\{ V/R \geq \gamma \} }$
-\item k-FWER \citep{van_der_laan_augmentation_2004}: Where $C(k) = I_{\{ V \geq k \} }$
+\item False Discovery Exceedance (FDX)\citep{genovese_exceedance_2006}: Where $C(\gamma) = I_{\{ V/R \geq \gamma \} }$.
+\item $k$-FWER \citep{van_der_laan_augmentation_2004}: Where $C(k) = I_{\{ V \geq k \} }$.
 \end{itemize}
 
 
@@ -72,7 +72,7 @@ Other measures of error which are not simple averages over replications of the e
 
 
 \subsection{Choosing Your Family}
-All the previous error measures assume that the family of hypotheses is known. As a researcher, defining the family is not an obvious task. The examples in section~\ref{sec:examples} included some trivial scenarios, in the sense the the family of hypotheses is clear. The section also include some examples where the family is not trivial (section \ref{eg:imaging_genetics}) and its choice will depend of the scientific in mind.
+All the previous error measures assume that the family of hypotheses is known. As a researcher, defining the family is not an obvious task. The examples in section~\ref{sec:examples} included some trivial scenarios, in the sense that the family of hypotheses is clear. The section also include some examples where the family is not trivial (section \ref{eg:imaging_genetics}) and its choice will depend of the scientific in mind.
 
 
 

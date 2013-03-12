@@ -1,3 +1,9 @@
 .Rproj.user
 .Rhistory
 .RData
+.project
+*.aux
+*.log
+*.bbl
+*.blg
+PractitionersGuidetoMultiplicity.pdf
