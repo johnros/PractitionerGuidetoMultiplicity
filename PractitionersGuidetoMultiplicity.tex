@@ -24,7 +24,7 @@
 
 \section{Introduction}
 
-It is quite common for modern research to test many hypotheses simultaneously. The frequentist hypothesis testing framework does not scale with the number of hypotheses in the sense that performing many $\alpha$ level tests will certainly yield many false findings. In order to scale, a researcher has to think of the type or errors he wishes to avoid and select the adequate procedure for that particular error type and data structure. A quick search of the tag \emph{[multiple-comparisons]} in the statistics Questions \& Answers web site \href{http://stats.stackexchange.com}{Cross Validates} demonstrates the amount of confusion this task can actually cause. This was also the point made in \citet[][section 4.4]{benjamini_simultaneous_2010}. 
+It is quite common for modern research to test many hypotheses simultaneously. The frequentist hypothesis testing framework does not scale with the number of hypotheses in the sense that performing many $\alpha$ level tests will certainly yield many false findings. In order to scale, a researcher has to think of the type or errors he wishes to avoid and select the adequate procedure for that particular error type and data structure. A quick search of the tag \emph{[multiple-comparisons]} in the statistics Questions \& Answers web site Cross Validates (\url{http://stats.stackexchange.com}) demonstrates the amount of confusion this task can actually cause. This was also the point made in \citet[][section 4.4]{benjamini_simultaneous_2010}. 
 In an attempt to offer guidance, we review possible error types for simultaneous inference (sec \ref{sec:measures_of_error}) and demonstrate them with some examples (sec \ref{sec:examples}). We also include some notes on the software implementing these procedures in appendix~\ref{sec:on_your_pc}.
 
 The emphasis of this manuscript is on the error rates, and not on the procedures themselves. For the purpose of selecting the precise procedure, \citet{farcomeni_review_2008} can serve as a good reference. We do however try to mention several procedures where appropriate.  Simultaneous confidence intervals and p-value adjustment will not be discussed as they are procedure specific. I.e., it is the choice of a procedure that defines the p-value adjustment and the confidence intervals, and not the error rate itself.
@@ -37,7 +37,7 @@ Consider the testing of several null hypotheses against their respective researc
 Formally: Let $H^0_i$, for $i=1,\ldots,n$ be the family of null hypotheses, $T_i$ taking the value of $1$ if the $i$'th null hypothesis is true and 0 otherwise,  and $R_i$ taking the value $1$ if the $i$'th hypothesis is rejected and 0 otherwise.
 The FWER is defined as $Prob\{\exists i:T_i=1 \& R_i=1  \}$
 
-\subsection{False Discovery Rates}
+\subsection{\label{sub:fdr}False Discovery Rates}
 Consider the same setup as in the previous section. The False Discovery Rate (FDR), first introduced by \citet{benjamini_controlling_1995}, is the average ratio between false discoveries and total discoveries over replicated experiments.
 Formally: Let $R=\sum_i{R_i}$ be the number of rejected hypothesis and $V$ be the number of \emph{falsly} rejected hypotheses. I.e., $V=\sum_i{R_i \cdot T_i}$. Defining that no rejections means no error\footnote{ From here onward, we will recall that $R=0 \Rightarrow V/R=0$ without mentioning it explicitly.} then the FDR is defined as $$E \left( \frac{V}{R} \right).$$
 
@@ -52,7 +52,7 @@ Remarks:
 
 \subsection{Other Measures of Error}
 The measures of error above are the most commonly used, and for good reason, but by no means the only ones. Since an error measure is merely an expectation over replications of the experiment, they can be expressed in the form $E(C)$ for some function $C$. In the cases of FWER and FDR $C = I_{\{ V \geq 1 \} } $ and $C = V/R$ respectively.
-Other measures of error include, but are not limited to:
+Some other measures of error are listed below:
 
 \begin{itemize}
 \item Per Comparison Error Rate (PCER): Where $C=V/n$.
@@ -61,13 +61,13 @@ Other measures of error include, but are not limited to:
 \item $k$-FWER \citep{van_der_laan_augmentation_2004}: Where $C(k) = I_{\{ V \geq k \} }$.
 \end{itemize}
 
-
 Other measures of error which are not simple averages over replications of the experiment include, but are not limited to:
 \begin{itemize}
 \item Positive FDR or pFDR \citep{storey_direct_2002} or $FDR_{-1}$ \citep{benjamini_discovering_2010} : Defined as $E(V/R;R>0)$.
 \item Marginal FDR \citep{sun_oracle_2007} or Fdr \citep{efron_microarrays_2008} or $FDR_{+1}$ \citep{benjamini_discovering_2010}: Defined as $E(V)/E(R)$.
 \end{itemize}
 
+We note however that FWE, FDR, pFDR and mFDR are (currently) by far the most popular. So much so that it is actually hard to find published applied research using any other. 
 
 
 
@@ -88,6 +88,7 @@ In his 1953 unpublished paper: ``The Problem of Multiple Comparisons'' \citep{be
 With his new understanding, our psychologist now has to decide how should he protect himself from false findings? 
 Say the tests consist of new candidate clinical diagnostics for condition X. Making an error means that a test will be used to diagnose X while it actually cannot distinguish between healthy and X. Since this is unacceptable for our psychologist, he will want an inference procedure that controls the FWE. In Tukey's example, the tests are independent, so he could consider, say Sidak's procedure or Holm's procedure [what to cite? original papers not instructive enough. Hochberg's book? which page?].
 
+
 Now consider a different scenario: The tests check for differences in personality attributes between genders. Making an error means that the psychologist might believe male and female differ in a way they actually do not. The researcher does not consider this a serious mistake, as long as many other true differences are discovered. In this setup, the researcher should control the FDR-- probably using the Benjamini-Hochberg procedure \citep{benjamini_controlling_1995}. Allowing for some mistakes will allow the researcher to enjoy a sensitivity gain compared to FWER-controlling-procedures.
 
 
@@ -96,18 +97,18 @@ Now consider a different scenario: The tests check for differences in personalit
 
 
 
-\subsection{Functional Magnetic Resonance Imaging}
-\subsubsection{Voxel Level Inference}
+\subsection{\label{sub:fMRI}Functional Magnetic Resonance Imaging--Voxel Level Inference}
 Consider now the case of the neuroscientist, trying to locate the brain regions responsive to visual stimuli. He will scan a dozen subjects or so in the Magnetic Resonance Imaging (MRI) machine and get the brain's activation\footnote{ He actually measures the blood oxygenation level. Details can be found in \cite{lazar_statistical_2008}.} To be precise, he will be measuring the activation level at \emph{each} of several thousand brain locations, called Volumetric Picture Elements (voxels). The exact number depending on the MRI's resolution. 
 In the aim of finding ``active'' locations, the researcher will want to test the null hypothesis of no response to the stimulus, at each voxel. A mistake would mean he declared a voxels as responsive when it actually is not. This does not seem like a terrible mistake to make so the researcher should probably protect himself from large proportions of errors, and not from the making of one single error. FDR is thus the error measure of choice.
 
 
-\subsubsection{Cluster Level Inference}
-[TODO]
-
-
 \subsection{Genome Wide Association Studies}
 In a typical Genome Wide Association Study (GWAS) the geneticist will record the genetic information of many subjects (genotyping) with the aim of discovering associations between the genotype and the individuals' attributes (phenotype). Assuming a univariate phenotype, the researcher will perform some sort of regression between the phenotype and genetics attributes (titled single nucleotide polymorphism-- SNP). With today's technology, the number of SNPs considered in a typical GWAS is in the hundreds of thousands. To declare an association, a researcher will try to reject the no association hypothesis between \emph{each} SNP and the phenotype, leading to the simultaneous testing of several hundreds of thousands of hypotheses. Since the researcher does not concern himself with the making of a mistake, as long as other associations discovered as true, he will choose FDR control. Probably using the Benjamini-Hochberg procedure.
+
+
+
+\subsubsection{Functional Magnetic Resonance Imaging-- Cluster Level Inference}
+Returning the the neuroscientist from sec~\ref{sub:fMRI}-- recalling that the voxels are arbitrary volume units, defined by the technology of the MRI and not by entities of interest for inference-- he decides that a more interesting entity is a mass of contiguous activations. He will thus decide that he is interested in contiguous regions with activation larger than 7 (again, in some arbitrary scale). After scanning a subject, he realizes there are 30 contiguous regions which exceed 7. Knowing enough probability theory, he is actually able to compute a p-value for the volume of each of the 30 regions. Since he can accept false regions, as long as there proportion is not too high, he should probably use FDR control. Alas, the FDR defined in section~\ref{sub:fdr} assumes a fixed and known number of hypotheses, while the number of excursion regions is random. Extensions of the FDR for the random-hypothesis case do exist. A rigorous exposition can be found in  \citet{siegmund_false_2011}. But we do note that error-controlling \emph{procedures} for the random hypothesis case are not as abundant and studied as the fixed hypothesis case. The mathematical proofs would typically require some hard to justify assumptions. Simulation performances however, do seem promising \citep{chumbley_false_2009,chumbley_topological_2010}.
 
 
 % Is another FWER example needed? Maybe ANOVA? Examples from Donoho & Jin 2004?
@@ -201,8 +202,10 @@ The search for procedures with desirable properties under errors measures such a
 \section{\label{sec:on_your_pc} On Your Computer}
 It does not suffice to choose an error measure in order to perform an analysis. An error-controlling procedure will also have to be chosen, and this is what you should look for in your favourite software. 
 
-In the R programming environment \citep{r_development_core_team_r:_2011} the function \emph{p.adjust} in the \emph{stats} package will allow to perform the most common procedures. The references in the function documentation are a good starting point for learning about these procedures. For FWER controlling procedures, in particular in the context of linear contrasts in regression models, the \emph{multcomp} package is a very good option. For newer, many packages have been written. Due to their fast rate of change we will not try to give references nor recommendations, and leave that to your favourite web search engine . 
-We also note that the hierarchal testing scheme in section~\ref{eg:imaging_genetics} has not been implemented to the best of our knowledge. Its implementation would require a new syntax to describe the hypotheses' hierarchy (families) and is an open challenge. 
+In the R programming environment \citep{r_development_core_team_r:_2011} the function \emph{p.adjust} in the \emph{stats} package will allow to perform the most common procedures. The references in the function documentation are a good starting point for learning about these procedures. 
+For FWER controlling procedures, in particular in the context of linear contrasts in regression models, the \emph{multcomp} package is a very good option. 
+For FDR control (and variants) many packages have been written. A good listing of these can be found in Korbinian Strimmer's web site: \url{http://strimmerlab.org/notes/fdr.html}. 
+We also note that the hierarchical testing scheme in section~\ref{eg:imaging_genetics} has not been implemented to the best of our knowledge. Its implementation would require a new syntax to describe the hypotheses' hierarchy (families) and is an open challenge. 
 
 In SAS, multiple testing procedures are incorporated within PROC MIXED and also in PROC MULTEST.  The canonical reference is \citet{westfall_multiple_2011}. 
 
