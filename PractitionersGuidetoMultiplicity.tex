@@ -40,8 +40,8 @@ The emphasis of this manuscript is on the error rates, and not on the procedures
 Consider the testing of several null hypotheses against their respective research (alternative) hypotheses. The Family Wise Error Rate (FWER) is the frequency of experiments in which a false rejection of a null hypothesis will occur. I.e., a ``false positive'' finding will occur.
 
 Formally: Let $ \{ H^0_i \} $, for $i=1,\ldots,n$ be the family of null hypotheses, $T_i=1$ if the $i$'th null hypothesis is true and 0 otherwise,  and $R_i=1$ if the $i$'th hypothesis is rejected and 0 otherwise.
-Let $R=\sum_i{R_i}$ be the number of rejected hypothesis and $V$ be the number of \emph{falsly} rejected hypotheses. I.e., $V=\sum_i{R_i \cdot T_i}$.
-The FWER is defined as $$Prob\{V \geq1  \}$$
+Let $R=\sum_i{R_i}$ be the number of rejected hypothesis and $V$ be the number of \emph{falsely} rejected hypotheses. I.e., $V=\sum_i{R_i \cdot T_i}$.
+The FWER is defined as $$Prob\{V \geq1  \}.$$
 
 \subsection{\label{sub:fdr}False Discovery Rates}
 Consider the same setup as in the previous section. The False Discovery Rate (FDR), first introduced by \citet{benjamini_controlling_1995}, is the average ratio between false discoveries and total discoveries over replicated experiments.
@@ -71,7 +71,7 @@ Some other measures of error are:
 Other measures of error which are not simple averages over replications of the experiment include, but are not limited to:
 \begin{itemize}
 \item Positive FDR or pFDR \citep{storey_direct_2002} or $FDR_{-1}$ \citep{benjamini_discovering_2010} : Defined as $E(V/R;R>0)$.
-\item Marginal FDR \citep{sun_oracle_2007} or Fdr \citep{efron_microarrays_2008} or $FDR_{+1}$ \citep{benjamini_discovering_2010}: Defined as $E(V)/E(R)$.
+\item Marginal FDR or mFDR \citep{sun_oracle_2007} or Fdr \citep{efron_microarrays_2008} or $FDR_{+1}$ \citep{benjamini_discovering_2010}: Defined as $E(V)/E(R)$.
 \end{itemize}
 
 We note however that FWE, FDR, pFDR and mFDR are (currently) by far the most popular. So much so that it is actually hard to find published applied research using any other. 
@@ -96,7 +96,7 @@ With this new understanding, our psychologist now has to decide how should he pr
 Say the tests consist of new candidate clinical diagnostics for condition X. Making an error means that a test will be used to diagnose X while it actually cannot distinguish between healthy and X. Since this is unacceptable for our psychologist, he will want an inference procedure that controls the FWE. In Tukey's example, the tests are independent, so he could consider, say Sidak's procedure or Holm's procedure [what to cite? original papers not instructive enough. Hochberg's book? which page?].
 
 
-Now consider a different scenario: The tests check for differences in personality attributes between genders. Making an error means that the psychologist might believe male and female differ in a way they actually do not. The researcher does not consider this a serious mistake, as long as many other true differences are discovered. In this setup, the researcher should control the FDR-- probably using the Benjamini-Hochberg procedure \citep{benjamini_controlling_1995}. Allowing for some mistakes will allow the researcher to enjoy a sensitivity gain compared to FWER-controlling-procedures.
+Now consider a different scenario: The tests check for differences in personality attributes between genders. Making an error means that the psychologist might believe male and female differ in a way they actually do not. The researcher does not consider this a serious mistake, as long as many other true differences are discovered. In this setup, the researcher should control the FDR -- probably using the Benjamini-Hochberg procedure \citep{benjamini_controlling_1995}. Allowing for some mistakes will allow the researcher to enjoy a sensitivity gain compared to FWER-controlling-procedures.
 
 
 \subsection{ANOVA}
