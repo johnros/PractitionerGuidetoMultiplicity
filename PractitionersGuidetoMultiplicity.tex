@@ -140,7 +140,7 @@ In his 1953 unpublished paper: ``The Problem of Multiple Comparisons'' \citep{be
 
 With this new understanding, our psychologist now has to decide how should he protect himself from false findings? 
 Say the tests consist of new candidate clinical diagnostics for condition X. Making an error means that a test will be used to diagnose X while it actually cannot distinguish between healthy and X. Since this is unacceptable for our psychologist, he will want an inference procedure that controls the FWE in the strong sense. 
-In Tukey's example, the tests are independent, so he could consider, say Holm's procedure \citep{holm_1979}.
+In Tukey's example, the tests are independent, so he could consider, say Holm's procedure \citep{holm_simple_1979}.
 
 
 Now consider a different scenario: The tests check for differences in personality attributes between genders. Making an error means that the psychologist might believe male and female differ in a way they actually do not. The researcher does not consider this a serious mistake, as long as many other true differences are discovered. In this setup, the researcher should control the FDR -- probably using the Benjamini-Hochberg procedure \citep{benjamini_controlling_1995}. Allowing for some mistakes will allow the researcher to enjoy a sensitivity gain compared to FWER-controlling-procedures.
@@ -166,14 +166,17 @@ Alternatively, if the researcher can allow for some slack and accept false regio
 
 
 \subsubsection{Functional Magnetic Resonance Imaging-- Clinical Scan}
-Returning again to the neuroscientist from sec~\ref{sub:fMRI}-- this time his patient is about to enter surgery, for the removal of a brain tumour. The patient will be scanned in the fMRI in order to localize the speech regions, as the tumour is residing nearby and the surgeon needs to be extra-careful around these regions. This is a case where type $II$ errors are arguably more important than type $I$ errors: underestimating the speech region might cost the patient his verbal skills. Overestimating it, might cost him an extra surgery or a recurring tumour. None of the error measures presented until now adresses is concerned with false negatives. Recurring to the terminology in table~\ref{tab:event_notation}, our neuroscientist would probably be interested in something in the likes of $E(T/(m-R))$ which captures the sensitivity of the inference. This measure is the False Non Detection Rate (FNR) \citep{genovese_ROC_2002} and we shall revisit it in section~\ref{sec:power}. 
+Returning again to the neuroscientist from sec~\ref{sub:fMRI}-- this time his patient is about to enter surgery, for the removal of a brain tumour. The patient will be scanned in the fMRI in order to localize the speech regions, as the tumour is residing nearby and the surgeon needs to be extra-careful around these regions. This is a case where type $II$ errors are arguably more important than type $I$ errors: underestimating the speech region might cost the patient his verbal skills. Overestimating it, might cost him an extra surgery or a recurring tumour. None of the error measures presented until now adresses is concerned with false negatives. Recurring to the terminology in table~\ref{tab:event_notation}, our neuroscientist would probably be interested in something in the likes of $E(T/(m-R))$ which captures the sensitivity of the inference. This measure is the False Non Detection Rate (FNR) \citep{genovese_operating_2002} and we shall revisit it in section~\ref{sec:power}. 
 
 
 
 
 \subsection{Genome Wide Association Studies}
-In a typical Genome Wide Association Study (GWAS) the geneticist will record the genetic information of many subjects (genotyping) with the aim of discovering associations between the genotype and the individuals' attributes (phenotype). Assuming a univariate phenotype, the researcher will perform some sort of regression between the phenotype and genetics attributes (titled single nucleotide polymorphism-- SNP). With today's technology, the number of SNPs considered in a typical GWAS is in the hundreds of thousands. To declare an association, a researcher will try to reject the no association hypothesis between \emph{each} SNP and the phenotype, leading to the simultaneous testing of several hundreds of thousands of hypotheses. Since the researcher does not concern himself with the making of a mistake, as long as other associations discovered as true, he will choose FDR control. Probably using the Benjamini-Hochberg procedure.
+In a typical Genome Wide Association Study (GWAS) the geneticist will record the genetic information of many subjects (genotyping) with the aim of discovering associations between the genotype and the individuals' attributes (phenotype). Assuming a univariate phenotype, the researcher will perform some sort of regression between the phenotype and genetics attributes (titled single nucleotide polymorphism-- SNP). With today's technology, the number of SNPs considered in a typical GWAS is in the hundreds of thousands. To declare an association, a researcher will try to reject the no association hypothesis between \emph{each} SNP and the phenotype, leading to the simultaneous testing of several hundreds of thousands of hypotheses. 
+Since the researcher does not concern himself with the making of a mistake, as long as other associations discovered as true, he should choose FDR control. 
+Having said that, we should remark that it is also very common in GWAS, to use a p-value threshold of $10^{-7}$. This threshold is intended for FWER control, when searching over $500,000$ SNPs and using the Bonferonni procedure \cite{bush_chapter_2012}. 
 
+So FDR or FWER? Well, it is left for the researcher to decide, and ultimately depends on the implications of declaring false associations. 
 
 
 
@@ -239,7 +242,7 @@ Using the notation presented in table~\ref{tab:event_notation}, we can specify m
 
 The different procedures aimed at satisfying these error functions typically use the local fdr statistic ($fdr(z_i)$) as a test statistic, but differ in the heuristics used to  compute this statistic \cite[eg.][]{storey_direct_2002,efron_microarrays_2008,sun_oracle_2007}. Typically assuming a large number of hypotheses being tested, and independence between test statistics. 
 
-The search for procedures with desirable properties under errors measures such as eq~\ref{eq:compound_1}  - eq~\ref{eq:compound_3}, is ongoing. It is an active field of investigation with beautiful theory, either developed by the Multiple Comparisons community or borrowing from statistical decision theory \cite[see][]{sun_oracle_2007}. The analysis of the finite-sampling properties of suggested procedures with respect to some desirable error measures is not an easy task.  For a complete treatment, and state of the art procedures, the reader is referred to \cite{efron2010large}.
+The search for procedures with desirable properties under errors measures such as eq~\ref{eq:compound_1}  - eq~\ref{eq:compound_3}, is ongoing. It is an active field of investigation with beautiful theory, either developed by the Multiple Comparisons community or borrowing from statistical decision theory \cite[see][]{sun_oracle_2007}. The analysis of the finite-sampling properties of suggested procedures with respect to some desirable error measures is not an easy task.  For a complete treatment, and state of the art procedures, the reader is referred to \cite{efron_large-scale_2010}.
 
 
 
@@ -256,7 +259,10 @@ The search for procedures with desirable properties under errors measures such a
 \appendix
 
 \section{\label{sec:on_your_pc} On Your Computer}
-It does not suffice to choose an error measure in order to perform an analysis. An error-controlling procedure will also have to be chosen, and this is what you should look for in your favourite software. 
+It does not suffice to choose an error measure in order to perform an analysis. An error-controlling procedure will also have to be chosen, and this is what you should look for in your favourite software. This might be a general purpose statistical suite, or a problem-specific application. In the latter case, we have little to suggest, as domain specific applications typically implement the procedures popularised in that field. 
+In the brain imaging example, popular software include SPM, Brain Voyager, FSL, AFNII. All incorporate the multiplicity control procedure preferred by their authors (thus implicitly, the error measure). 
+In the GWAS example, the same occurs in software such as Plink, PRESTO, PERMORY and others. 
+General purpose statistical software are built for flexibility in the analysis, and thus incorporate more multiplicity control procedures. 
 
 In the R programming environment \citep{r_development_core_team_r:_2011} the function \emph{p.adjust} in the \emph{stats} package will allow to perform the most common procedures. The references in the function documentation are a good starting point for learning about these procedures. 
 For FWER controlling procedures, in particular in the context of linear contrasts in regression models, the \emph{multcomp} package is a very good option. 
