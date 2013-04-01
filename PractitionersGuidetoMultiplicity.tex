@@ -207,34 +207,23 @@ The details can be found in \citet{benjamini_adjusting_2011}.
 
 \section{\label{sec:power}Power Considerations}
 
-The reader might have noted that the different error measures in section~\ref{sec:measures_of_error} care only of the number of false discoveries. Our interest in detection sensitivity is naturally implicit in the procedures researchers employ. Otherwise, never rejecting any null hypothesis, will trivially control all of the error types in section~\ref{sec:measures_of_error}. 
+The reader might have noticed that the different error measures in section~\ref{sec:measures_of_error} care only of the number of false discoveries. Our interest in detection sensitivity is naturally implicit in the procedures researchers employ. Otherwise, never rejecting any null hypothesis, will trivially control all of the error types in section~\ref{sec:measures_of_error}. 
 The introduction of power requires the consideration of the expected deviation from the null hypotheses. To see this, consider a scenario where the researcher is certain that if an effect exists, it would be of magnitude $\pm 7$ (in some arbitrary scale, say z-values). Ignoring this belief, will lead the researcher to reject all hypotheses with large (absolute) effects. Particularly, an effect of, say 20,  will be considered very extreme, with infinitesimally small p-values. But, when considering the fact that effects are expected to be near 7, the researcher might actually prefer to reject effects near 7 \emph{before} he rejects effects near 20. 
 
-Specifying the expected deviation from the null for each hypothesis tested is no easy task. There exist however, several procedures which use the multitude of hypotheses tested in an attempt to empirically characterize the deviations from the null, and harness this information. The most popular rely on estimators of the probability of a hypothesis being a true null given the value of the test statistic $z_i$ ($fdr(z_i)$) or given the \emph{tail} values of the test statistic ($Fdr(z_i)$). The details can be found in \cite{efron_microarrays_2008}. Note, that these are not error measures but rather procedures relying on test statistics other than p-values.  
+Specifying the expected deviation from the null for each hypothesis tested is no easy task. There exist however, several procedures which use the multitude of hypotheses tested in an attempt to empirically characterize the deviations from the null, and harness this information. The most popular rely on estimators of the probability of a hypothesis being a true null given the value of the test statistic $z_i$. This is the posterior probability of the null, also named ``local fdr'' and denoted by $fdr(z_i)$. The details can be found in \cite{efron_microarrays_2008}. Note, that these are not error measures but rather procedures relying on test statistics other than p-values.  
 
-Using the notation presented in table~\ref{tab:event_notation}, we can consider the following measures:
-$min\{mFNR \quad s.t. \quad mFDR\leq \alpha \}$
+Using the notation presented in table~\ref{tab:event_notation}, we can specify many error measures which capture the idea of maximal power subject to a  that the false detections are kept at some desired, low level:
 
-
-\begin{enumerate}
-\item $min\{FNR \quad s.t. \quad FDR\leq \alpha \}$
-\item 
-\item $min\{mFNR \quad s.t. \quad mFDR\leq \alpha \}$
-\end{enumerate}
-
-where $mFDR=\frac{E(V)}{E(R)}$ captures false positives, and 
-$mFNR=\frac{E(T)}{E(m-R)}$ captures false negatives.
+\begin{align}
+        min\{FNR \quad s.t. \quad FDR\leq \alpha \} \label{eq:compound_1}\\
+	min\{mFNR \quad s.t. \quad mFDR\leq \alpha \} \label{eq:compound_2}\\
+	min\{T \quad s.t. \quad V \leq \alpha \} \label{eq:compound_3}
+\end{align}
 
 
-These two procedures ($fdr(z_i)$ and $Fdr(z_i)$) have been shown to have many desirable properties for several error measures of interest.
+Most procedures aimed at satisfying these error functions typically use the local fdr statistic ($fdr(z_i)$) as a test statistic, but differ in the heuristics used to  compute this statistic \cite[eg.][]{storey_direct_2002,efron_microarrays_2008,sun_oracle_2007}. Typically assuming a large number of hypotheses being tested, and independence between test statistics. 
 
-
-While eq~\ref{eq:compound_error} is a very appealing error measure, as it explcitly introduces the desire for powerful tests, it does suffer from some of the anomalies making the FDR a preferable error measure than mFDR: When all null hypotheses are true, $mFDR$ is identically 1 so that the only procedure that can satisfy $mFDR\leq \alpha <1$ is the one that never rejects anything. This caveat is eschewed by adding some (possibly debatable) technical assumptions, but mostly by considering scenarios with infinitely many hypotheses being tested. Nevertheless, there is no escaping the growing popularity of these procedures, which show good properties in simulations and application \citep[example][]{efron_microarrays_2008}.
-
-[TODO: Additive error measures: Genovese \& Wasserman, Sun \& Cai, Lee \& Bjornstad ]
-
-
-The search for procedures with desirable properties under errors measures such as eq~\ref{eq:compound_error}, is ongoing. It is an active field of investigation with beautiful theory, either developed by the Multiple Comparisons community or borrowing from statistical decision theory \cite[see][]{sun_oracle_2007}. The analysis of the finite-sampling properties of suggested procedures with respect to some desirable error measures is not an easy task. Hopefully, in the near future, more error measures will be accompanied by appropriate controlling procedures so that researcher will be able to choose a tailored tool for the inference they wish to make.
+The search for procedures with desirable properties under errors measures such as eq~\ref{eq:compound_1}  - eq~\ref{eq:compound_3}, is ongoing. It is an active field of investigation with beautiful theory, either developed by the Multiple Comparisons community or borrowing from statistical decision theory \cite[see][]{sun_oracle_2007}. The analysis of the finite-sampling properties of suggested procedures with respect to some desirable error measures is not an easy task.  For a complete treatment, and state of the art procedures, the reader is referred to \cite{efron2010large}.
 
 
 
