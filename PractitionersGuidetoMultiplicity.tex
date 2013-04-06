@@ -36,8 +36,8 @@
 
 \section{Introduction}
 
-It is quite common for modern research to test many hypotheses simultaneously. The frequentist hypothesis testing framework does not scale with the number of hypotheses in the sense that performing many $\alpha$ level tests will probably yield many false findings. In order to scale, a researcher has to consider of the type or errors he wishes to avoid and select the adequate procedure for that particular error type and data structure. A quick search of the tag \emph{[multiple-comparisons]} in the statistics Questions \& Answers web site Cross Validates (\url{http://stats.stackexchange.com}) demonstrates the amount of confusion this task can actually cause. This was also a point made at the 2009 Multiple Comparisons conference in Tokyo \citep[][section 4.4]{benjamini_simultaneous_2010}. 
-In an attempt to offer guidance, we review possible error types for simultaneous inference (sec \ref{sec:measures_of_error}) and demonstrate them with some examples (sec \ref{sec:examples}). We also include some notes on the software implementing these procedures in appendix~\ref{sec:on_your_pc}.
+It is quite common for modern research to test many hypotheses simultaneously. The statistical (frequentist) hypothesis testing framework does not scale with the number of hypotheses in the sense that performing many hypothesis tests will probably yield many false findings. In order to scale, a researcher has to consider of the type or errors he wishes to avoid and select the adequate procedure for that particular error type and data structure. A quick search of the tag \emph{[multiple-comparisons]} in the statistics Questions \& Answers web site Cross Validates (\url{http://stats.stackexchange.com}) demonstrates the amount of confusion this task can actually cause. This was also a point made at the 2009 Multiple Comparisons conference in Tokyo \citep[][section 4.4]{benjamini_simultaneous_2010}. 
+In an attempt to offer guidance, we review possible error types for simultaneous inference (sec~\ref{sec:measures_of_error}) and demonstrate them with some practical examples (sec \ref{sec:examples}), which clarify the formalism of sec~\ref{sec:measures_of_error}. Finally, we include some notes on the software implementations of the methods discussed, in appendix~\ref{sec:on_your_pc}.
 
 The emphasis of this manuscript is on the error rates, and not on the procedures themselves. For the purpose of selecting the appropriate procedure consult your favourite software's documentation (see our appendix~\ref{sec:on_your_pc}). Alternatively, \citet{farcomeni_review_2008} can serve as a good reference. 
 We do try to name several procedures in this manuscript where appropriate.  Simultaneous confidence intervals and p-value adjustment will not be discussed as they are procedure specific. I.e., it is the choice of a procedure that defines the p-value adjustment and the confidence intervals, and not the error rate itself.
@@ -51,7 +51,7 @@ Consider the testing of several null hypotheses against their respective researc
 
 
 
-Table~\ref{tab:event_notation} introduces the nomenclature which has become standard in the multiple comparisons community and will be referenced throughout this article. Following this notation, the FWER is defined as $$Prob\{V \geq1  \}$$ where $Prob(.)$ denotes the relative frequency within all possible experimental results.
+Table~\ref{tab:event_notation} introduces the nomenclature which has become standard in the multiple comparisons community and will be referenced throughout this article. Following this notation, the FWER is defined as $$Prob(V \geq 1 )$$ where $Prob(.)$ denotes the relative frequency within all possible experimental results.
 
 
 
@@ -81,9 +81,9 @@ As their names imply, ``strong'' control is the stricter criterion, which entail
 \subsection{\label{sub:fdr}False Discovery Rates}
 
 Consider the same setup as in the previous section. The False Discovery Rate (FDR), first introduced by \citet{benjamini_controlling_1995}, is the average ratio between false discoveries and total discoveries over replicated experiments. 
-Denoting the (unknown) False Discovery Proportion of a particular inference using a particular data set as $ FDP=V/R $, and setting the convention that no discoveries signify no errors ($R=0 \Rightarrow FDP=0$), the FDR can be now defined as:
+Denoting the (unknown) False Discovery Proportion (FDP) of a particular inference using a particular data set as $ FDP=V/R $, and setting the convention that no discoveries signify no errors ($R=0 \Rightarrow FDP=0$), the FDR can be now defined as:
 $$E \left( FDP \right)$$ 
-where $E(.)$ denotes the average over all possible experiments results.
+where $E(.)$ denotes the average over all possible experimental results.
 
 
 Some remarks follow:
@@ -99,13 +99,25 @@ Some remarks follow:
 FWER and FDR are the most commonly used, but by no means the only ones. Since many error measures are merely an average over replications of the experiment, many other error measures can be considered. Just by replacing the error function to be averaged. Denoting by $E(C)$ the average, over all possible experiments outcomes, of some error $C$. We now see that FWER and FDR simply set  $C = I_{\{ V \geq 1 \} } $ and $C = FDP$ respectively.
 Some other measures of error are:
 
+
+
 \begin{itemize}
+
 \item Per Family Error Rate (PFER): Where $C=V$.\\
-This measure is the simple (expected) number of errors. 
-\item Per Comparison Error Rate (PCER): Where $C=V/n$.\item $k$-FWER \citep{van_der_laan_augmentation_2004}: Where $C(k) = I_{\{ V \geq k \} }$.
+This measure is the simple (expected) number of erroneous discoveries. 
+
+\item Per Comparison Error Rate (PCER): Where $C=V/m$.
+
+\item $k$-FWER \citep{van_der_laan_augmentation_2004}: Where $C(k) = I_{\{ V \geq k \} }$.\\
+This measure is the relative frequency of the making of no less than $k$ erroneous discoveries.
+
 \item False Discovery Exceedance (FDX)\citep{genovese_exceedance_2006}: Where $C(\gamma) = I_{\{ V/R \geq \gamma \} }$.\\
-This measure was motivated by the fact that FDR keeps the proportion of false discoveries small, but only \emph{on average}. FDR does not exclude the possibility of making more than $FDP>\alpha$ mistakes in almost all samples. FDX targets this scenario explicitly, and is thus more conservative than FDR. 
+This measure was motivated by the fact that FDR keeps the proportion of false discoveries small, but only \emph{on average}. 
+In extreme scenarios, FDR does not exclude the possibility of making more than $FDP>\alpha$ mistakes in \emph{almost all} experiments. FDX targets these scenarios explicitly, and is thus more conservative than FDR. 
+
 \end{itemize}
+
+
 
 Other measures of error which are not simple averages over replications of the experiment include, but are not limited to:
 \begin{itemize}
@@ -140,10 +152,9 @@ In his 1953 unpublished paper: ``The Problem of Multiple Comparisons'' \citep{be
 
 With this new understanding, our psychologist now has to decide how should he protect himself from false findings? 
 Say the tests consist of new candidate clinical diagnostics for condition X. Making an error means that a test will be used to diagnose X while it actually cannot distinguish between healthy and X. Since this is unacceptable for our psychologist, he will want an inference procedure that controls the FWE in the strong sense. 
-In Tukey's example, the tests are independent, so he could consider, say Holm's procedure \citep{holm_simple_1979}.
 
 
-Now consider a different scenario: The tests check for differences in personality attributes between genders. Making an error means that the psychologist might believe male and female differ in a way they actually do not. The researcher does not consider this a serious mistake, as long as many other true differences are discovered. In this setup, the researcher should control the FDR -- probably using the Benjamini-Hochberg procedure \citep{benjamini_controlling_1995}. Allowing for some mistakes will allow the researcher to enjoy a sensitivity gain compared to FWER-controlling-procedures.
+Now consider a different scenario: The tests check for differences in personality attributes between genders. Making an error means that the psychologist might believe male and female differ in a way they actually do not. The researcher does not consider this a serious mistake, as long as many other true differences are discovered. In this setup, the researcher should control the FDR -- probably using the Benjamini-Hochberg procedure \citep{benjamini_controlling_1995}. Allowing for some mistakes will allow the researcher to enjoy a sensitivity gain compared to FWER-controlling-procedures. The interpretation of the findings should be done in accord with the error measure employed.
 
 
 \subsection{ANOVA}
@@ -153,20 +164,21 @@ Now consider a different scenario: The tests check for differences in personalit
 
 \subsection{\label{sub:fMRI}Functional Magnetic Resonance Imaging}
 
-Consider now the case of the neuroscientist, trying to locate the brain regions responsive to visual stimuli. He scaned a dozen subjects or so in the Magnetic Resonance Imaging (MRI) machine and recorded the brain's activation\footnote{ He actually measured the blood oxygenation level. Details can be found in \cite{lazar_statistical_2008}.} during the stimuli. To be precise, he measured the activation level at \emph{each} of several thousand brain locations, called Volumetric Picture Elements (voxels). Their exact number depending on the MRI's resolution. With the measured activation levels at hand, the researcher can compute their correlation to the stimulus given. If the voxel-wise measurement is correlated with the stimulus, the location is considered ``active''. We see that localising activation actually consists of performing many local hypothesis tests: the null hypothesis of no correlation to the stimulus is tested at each voxel.
+Consider now the case of the neuroscientist, trying to locate the brain regions responsive to visual stimuli. He scaned a dozen subjects or so in the Magnetic Resonance Imaging (MRI) machine and recorded the brain's activation\footnote{ He actually measured the blood oxygenation level. Details can be found in \cite{lazar_statistical_2008}.} in response to the stimuli. To be precise, he measured the activation level at \emph{each} of several thousand brain locations, called Volumetric Picture Elements (voxels). Their exact number depending on the resolution of the MRI scan . With the measured activation levels at hand, the researcher can compute their correlation to the stimulus given. If the voxel-wise measurement is correlated with the stimulus, the location is considered ``active''. We see that localising activation actually consists of performing many local hypothesis tests: the null hypothesis of no correlation to the stimulus is tested at each voxel.
 
 Returning to multiplicity error rates; An error would mean he declared a voxel as responsive when it actually is not. This does not seem like a terrible mistake to make so the researcher should probably protect himself from large proportions of errors, and not from the making of one single error. FWER, k-FWER and Per Family Error Rate are thus excluded. Per Comparison Error Rate seems like a possible candidate, but it very liberal. One can actually gain power by including many ``junk'' hypotheses. To see this consider the case of infinitely many hypotheses tested. The proportion of errors will trivially be smaller than any $\alpha$ we pick. Our researcher is thus left with FDR and FDX as candidate error measures. Finally, FDR is chosen due to the plethora of procedures available to control it. 
 
 
 \subsubsection{Functional Magnetic Resonance Imaging-- Cluster Level Inference}
+
 Returning to the neuroscientist from sec~\ref{sub:fMRI}-- recalling that the voxels are arbitrary volume units, defined by the technology of the MRI and not by entities of interest for inference-- he decides that a more interesting entity is a mass of contiguous activations. He thus decides that he is interested in spatially contiguous regions with activation larger than ``7'' (in some scale). These regions are known as ``excursion regions'', ``excellence sets'', ``blobs'' and possibly many other names. 
 After scanning a subject, he realises there are 30 contiguous regions which exceed 7. Knowing enough probability theory, he is able to compute a p-value for the volume of each of the 30 regions. If he rather not make any mistakes, he can control the FWER of the regions. Namely, controlling the probability of declaring any inactive regions as active. This is indeed the approach implemented in several brain analysis software packages, particularly SPM (\url{http://www.fil.ion.ucl.ac.uk/spm/}).
 
-Alternatively, if the researcher can allow for some slack and accept false regions-- as long as their proportion is not too high-- he should probably use FDR control. Alas, the FDR defined in section~\ref{sub:fdr} assumes a fixed and known number of hypotheses, and the number of excursion regions is random. Extensions of the FDR for the random-hypothesis case do exist. A rigorous exposition can be found in  \citet{siegmund_false_2011}. We do note however, that error-controlling \emph{procedures} for the random hypothesis case are not as abundant and studied as the fixed hypothesis case. The mathematical proofs would typically require some hard to justify assumptions. Simulation performances however, do seem promising \citep{chumbley_false_2009,chumbley_topological_2010}.
+Alternatively, if the researcher can allow for some slack and accept false regions-- as long as their proportion is not too high-- he should probably use FDR control. Alas, the FDR defined in section~\ref{sub:fdr} assumes an a priori fixed and known number of hypotheses being tested ($m$). The number of excursion regions is data dependent, thus random and a priori unknown. Extensions of the FDR for the random-number-of-hypothesis case do exist. A rigorous exposition can be found in  \citet{siegmund_false_2011}. We do note however, that error-controlling \emph{procedures} for the random hypothesis case are not as abundant and studied as the fixed hypothesis case. The mathematical proofs would typically require some hard to justify assumptions. Simulation performances however, do seem promising \citep{chumbley_false_2009,chumbley_topological_2010}.
 
 
 \subsubsection{Functional Magnetic Resonance Imaging-- Clinical Scan}
-Returning again to the neuroscientist from sec~\ref{sub:fMRI}-- this time his patient is about to enter surgery, for the removal of a brain tumour. The patient will be scanned in the fMRI in order to localize the speech regions, as the tumour is residing nearby and the surgeon needs to be extra-careful around these regions. This is a case where type $II$ errors are arguably more important than type $I$ errors: underestimating the speech region might cost the patient his verbal skills. Overestimating it, might cost him an extra surgery or a recurring tumour. None of the error measures presented until now adresses is concerned with false negatives. Recurring to the terminology in table~\ref{tab:event_notation}, our neuroscientist would probably be interested in something in the likes of $E(T/(m-R))$ which captures the sensitivity of the inference. This measure is the False Non Detection Rate (FNR) \citep{genovese_operating_2002} and we shall revisit it in section~\ref{sec:power}. 
+Returning again to the neuroscientist from sec~\ref{sub:fMRI}-- this time his patient is about to enter surgery, for the removal of a brain tumour. The patient will be scanned in the fMRI in order to localize the speech regions, as the tumour is residing nearby and the surgeon needs to be extra-careful around these regions. This is a case where type $II$ errors are arguably more important than type $I$ errors: underestimating the speech region might cost the patient his verbal skills. Overestimating it, might cost him an extra surgery or a recurring tumour. None of the error measures presented until now adresses is concerned with false negatives. Recurring to the terminology in table~\ref{tab:event_notation}, our neuroscientist would probably be interested in something in the likes of $E(T/(m-R))$ which captures the sensitivity of the inference. This measure is the False Non Detection Rate (FNR) \citep{genovese_operating_2002}. We have not presented this measure yet, as it is concerned with the \emph{non-detections}. We shall revisit it in the context of power in section~\ref{sec:power}. 
 
 
 
@@ -229,14 +241,14 @@ The details can be found in \citet{benjamini_adjusting_2011}.
 The reader might have noticed that the different error measures in section~\ref{sec:measures_of_error} care only of the number of false discoveries. Our interest in detection sensitivity is naturally implicit in the procedures researchers employ. Otherwise, never rejecting any null hypothesis, will trivially control all of the error types in section~\ref{sec:measures_of_error}. 
 The introduction of power requires the consideration of the expected deviation from the null hypotheses. To see this, consider a scenario where the researcher is certain that if an effect exists, it would be of magnitude $\pm 7$ (in some arbitrary scale, say z-values). Performing a one sample $z$ or $t$ test, while ignoring this belief, will lead the researcher to reject all hypotheses with large (absolute) effects. Particularly, an effect of, say 20,  will be considered very extreme, with infinitesimally small p-values. But, when considering the fact that effects are expected to be near 7, the researcher might actually prefer to reject effects near 7 \emph{before} he rejects effects near 20. In the statistical terminology, this is simply an underpowered test constructed for the wrong alternative hypothesis. 
 
-Specifying the expected deviation from the null for each hypothesis tested is no easy task. There exist however, several procedures which use the multitude of hypotheses tested in an attempt to empirically characterise the deviations from the null under mild assumptions, and harness this information. Essentially all   rely on estimators of the probability of a hypothesis being a true null given the value of some test statistic $z_i$. This is the posterior probability of the null, also named ``local fdr'' and denoted by $fdr(z_i)$. The details can be found in \cite{efron_microarrays_2008}. Note, that this is not an error measures but rather a test statistic.  
+Specifying the expected deviation from the null for each hypothesis tested is no easy task. There exist however, several procedures which use the multitude of hypotheses tested in an attempt to empirically characterise the deviations from the null~\footnote{Under mild assumptions regarding the form these deviations might take.}, and harness this information to gain power. Essentially all rely on estimators of the probability of a hypothesis being a true null given the value of some test statistic $z_i$. This is the posterior probability of the null, also named ``local fdr'' and denoted by $fdr(z_i)$. The details can be found in \cite{efron_microarrays_2008}. Note, that this is not an error measures but rather a test statistic.  
 
 Using the notation presented in table~\ref{tab:event_notation}, we can specify many error measures which capture the idea of maximal power subject to the false detections being kept at a low level:
 
 \begin{align}
-        min\{FNR \quad s.t. \quad FDR\leq \alpha \} \label{eq:compound_1}\\
-	min\{mFNR \quad s.t. \quad mFDR\leq \alpha \} \label{eq:compound_2}\\
-	min\{T \quad s.t. \quad V \leq \alpha \} \label{eq:compound_3}
+        min\{FNR \quad \text{such that} \quad FDR\leq \alpha \} \label{eq:compound_1}\\
+	min\{mFNR \quad \text{such that} \quad mFDR\leq \alpha \} \label{eq:compound_2}\\
+	min\{T \quad \text{such that} \quad V \leq \alpha \} \label{eq:compound_3}
 \end{align}
 
 
@@ -254,7 +266,9 @@ The search for procedures with desirable properties under errors measures such a
 \section{Acknowledgments}
 % Yoav
 % Kornelius
-%David
+% David
+% Neomi
+
 
 \appendix
 
@@ -276,7 +290,8 @@ In SPSS, multiplicity corrections are typically found as part of the \emph{post-
 
 
 \section{\label{sec:glossary} Glossary}
-Some of the terms in the multiple-comparisons literature, have appeared in several other disciplines under different names. In this glossary, we use as a reference the statistical nomenclature in table~\ref{tab:event_notation}. Also note that we use \emph{rate} for the average of a \emph{ratio} or a \emph{proportion}. The literature is not consistent regarding this convention, so that the terms might be found in use for both purposes.
+Some of the terms in the multiple-comparisons literature, have appeared in several other disciplines under different names. To ease the transition, and for completeness, we suggest a glossary. 
+In this glossary, we use as a reference the statistical nomenclature in table~\ref{tab:event_notation}. Also note that we use \emph{rate} for the average of a \emph{ratio} or a \emph{proportion}. The literature is not consistent regarding this convention, so that the terms might be found in use for both purposes.
 
 %\begin{table}[H]
 %  \centering
