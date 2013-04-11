@@ -36,22 +36,29 @@
 
 \section{Introduction}
 
-It is quite common for modern research to test many hypotheses simultaneously. The statistical (frequentist) hypothesis testing framework does not scale with the number of hypotheses in the sense that performing many hypothesis tests will probably yield many false findings. In order to scale, a researcher has to consider of the type or errors he wishes to avoid and select the adequate procedure for that particular error type and data structure. A quick search of the tag \emph{[multiple-comparisons]} in the statistics Questions \& Answers web site Cross Validates (\url{http://stats.stackexchange.com}) demonstrates the amount of confusion this task can actually cause. This was also a point made at the 2009 Multiple Comparisons conference in Tokyo \citep[][section 4.4]{benjamini_simultaneous_2010}. 
-In an attempt to offer guidance, we review possible error types for simultaneous inference (sec~\ref{sec:measures_of_error}) and demonstrate them with some practical examples (sec \ref{sec:examples}), which clarify the formalism of sec~\ref{sec:measures_of_error}. Finally, we include some notes on the software implementations of the methods discussed, in appendix~\ref{sec:on_your_pc}.
+It is quite common in modern research, for a researcher to test many hypotheses. 
+The statistical (frequentist) hypothesis testing framework, does not scale with the number of hypotheses in the sense that na\"{i}vely performing many hypothesis tests will probably yield many false findings. 
+Indeed, statistical ``significance'' is evidence for the presence of a signal within the noise expected in a single test, not in a multitude. 
+In order to protect himself from an uncontrolled number of erroneous findings, a researcher has to consider of the type or errors he wishes to avoid and select the adequate procedure for that particular error type and data structure. 
+A quick search of the tag \emph{[multiple-comparisons]} in the statistics Questions \& Answers web site Cross Validates (\url{http://stats.stackexchange.com}) demonstrates the amount of confusion this task can actually cause. This was also a point made at the 2009 Multiple Comparisons conference in Tokyo \citep[][section 4.4]{benjamini_simultaneous_2010}. 
+In an attempt to offer guidance, we review possible error types for multiple testing (sec~\ref{sec:measures_of_error}) and demonstrate them with some practical examples (sec \ref{sec:examples}), which clarify the formalism of sec~\ref{sec:measures_of_error}. Finally, we include some notes on the software implementations of the methods discussed, in appendix~\ref{sec:on_your_pc}.
 
-The emphasis of this manuscript is on the error rates, and not on the procedures themselves. For the purpose of selecting the appropriate procedure consult your favourite software's documentation (see our appendix~\ref{sec:on_your_pc}). Alternatively, \citet{farcomeni_review_2008} can serve as a good reference. 
-We do try to name several procedures in this manuscript where appropriate.  Simultaneous confidence intervals and p-value adjustment will not be discussed as they are procedure specific. I.e., it is the choice of a procedure that defines the p-value adjustment and the confidence intervals, and not the error rate itself.
+The emphasis of this manuscript is on the error-rates, and not on the procedures themselves. For the purpose of selecting the appropriate procedure consult your favourite software's documentation (see our appendix~\ref{sec:on_your_pc}). Alternatively, \citet{farcomeni_review_2008} can serve as a good reference. 
+We do try to name several procedures in this manuscript where appropriate.  P-value adjustment will not be discussed as it is procedure specific. I.e., it is the choice of a procedure that defines the p-value adjustment, and not the error rate itself.
+Simultaneous confidence intervals will, also, not be discussed.  
 
 
 \section{\label{sec:measures_of_error}Measures of Error}
 
 \subsection{Family Wise Error Rates}
-Consider the testing of several null hypotheses against their respective research (alternative) hypotheses. The Family Wise Error Rate (FWER) is the frequency of experiments in which a false rejection of a null hypothesis will occur. I.e., the probability of a false finding, or, false positive.
+Consider the testing of several null hypotheses against their respective research (alternative) hypotheses. The Family Wise Error Rate (FWER) is the frequency of experiments in which a false rejection of some null hypothesis will occur. I.e., the probability of a false finding, or, false positive.
+
+As is customary in single hypothesis testing, a FWER level of $\alpha=0.05$ is often used and sometimes even required, as in drug registering experiments.
 
 
 
 
-Table~\ref{tab:event_notation} introduces the nomenclature which has become standard in the multiple comparisons community and will be referenced throughout this article. Following this notation, the FWER is defined as $$Prob(V \geq 1 )$$ where $Prob(.)$ denotes the relative frequency within all possible experimental results.
+Table~\ref{tab:event_notation} introduces the nomenclature which has become standard in the multiple comparisons community and will be referenced throughout this article. Following this notation, the FWER is defined as $$Prob(V \geq 1 )$$ where $Prob(.)$ denotes the relative frequency over repeated experiments.
 
 
 
@@ -70,8 +77,8 @@ Table~\ref{tab:event_notation} introduces the nomenclature which has become stan
 \end{table}
 
 
-\subsubsection{Weak and Strong Control}
-The probability of any particular inference procedure of making a false finding, depends on the existence of true effects. FWER control in the ``weak'' sense, refers to procedures which guarantee low FWER when there are no true effects, i.e., when all null hypotheses are correct. 
+\subsubsection{Weak and Strong Control the Family Wise Error Rate}
+The probability of any particular inference procedure of making a false finding, depends on the existence of true effects. FWER control in the ``weak'' sense, refers to procedures which guarantee low FWER when there are no true effects at all, i.e., when all null hypotheses are correct. 
 FWER control in the ``strong'' sense is the complementing concept, referring to procedures which guarantee FWER control even in the presence of some true effects. I.e., when not all null hypotheses are correct. 
 As their names imply, ``strong'' control is the stricter criterion, which entails ``weak'' control.
 
@@ -80,8 +87,8 @@ As their names imply, ``strong'' control is the stricter criterion, which entail
 
 \subsection{\label{sub:fdr}False Discovery Rates}
 
-Consider the same setup as in the previous section. The False Discovery Rate (FDR), first introduced by \citet{benjamini_controlling_1995}, is the average ratio between false discoveries and total discoveries over replicated experiments. 
-Denoting the (unknown) False Discovery Proportion (FDP) of a particular inference using a particular data set as $ FDP=V/R $, and setting the convention that no discoveries signify no errors ($R=0 \Rightarrow FDP=0$), the FDR can be now defined as:
+The False Discovery Rate (FDR), first introduced by \citet{benjamini_controlling_1995}, is the average ratio between false discoveries and total discoveries over replicated experiments. 
+Denoting the (unknown) False Discovery Proportion (FDP) in a particular experiment using a particular data set as $ FDP=V/R $, and setting the convention that no discoveries signify no errors ($R=0 \Rightarrow FDP=0$), the FDR can be now defined as:
 $$E \left( FDP \right)$$ 
 where $E(.)$ denotes the average over all possible experimental results.
 
@@ -89,14 +96,14 @@ where $E(.)$ denotes the average over all possible experimental results.
 Some remarks follow:
 \begin{enumerate}
 \item The FDR error rate has become synonymous with the Benjamini-Hochberg procedure presented in \citep{benjamini_controlling_1995} . This is plain wrong and confusing. Benjamini-Hochberg is a procedure that does indeed offer FDR control in particular setups, but it is only one of many.
-\item In the context of FDR, there is no $\alpha=0.05$ convention. Researchers are free and welcome to choose the right level of error they see adequate for their particular research. Obviously, an error level of $\alpha=0.5$ might be hard to defend from critique.
+\item In the context of FDR, there need not be an $\alpha=0.05$ convention. Researchers are free and welcome to choose the right level of error they see adequate for their particular research. Obviously, an error level of $\alpha=0.5$ might be hard to defend from critique. Having said that, since FDR control does offer FWER control in the strong sense, the $\alpha=0.05$ convention might be easily justifiable.
 \end{enumerate}
 
 
 
 
 \subsection{Other Measures of Error}
-FWER and FDR are the most commonly used, but by no means the only ones. Since many error measures are merely an average over replications of the experiment, many other error measures can be considered. Just by replacing the error function to be averaged. Denoting by $E(C)$ the average, over all possible experiments outcomes, of some error $C$. We now see that FWER and FDR simply set  $C = I_{\{ V \geq 1 \} } $ and $C = FDP$ respectively.
+FWER and FDR are the most commonly used, but by no means the only ones. Since many error measures are merely an average over replications of the experiment, many other error measures can be considered, by replacing the error function to be averaged. Denoting by $E(C)$ the average, over all possible experiments outcomes, of some error $C$. We now see that FWER and FDR simply set  $C = I_{\{ V \geq 1 \} } $ and $C = FDP$ respectively.
 Some other measures of error are:
 
 
@@ -113,7 +120,7 @@ This measure is the relative frequency of the making of no less than $k$ erroneo
 
 \item False Discovery Exceedance (FDX)\citep{genovese_exceedance_2006}: Where $C(\gamma) = I_{\{ V/R \geq \gamma \} }$.\\
 This measure was motivated by the fact that FDR keeps the proportion of false discoveries small, but only \emph{on average}. 
-In extreme scenarios, FDR does not exclude the possibility of making more than $FDP>\alpha$ mistakes in \emph{almost all} experiments. FDX targets these scenarios explicitly, and is thus more conservative than FDR. 
+In extreme scenarios, FDR does not exclude the possibility of making more than $FDP>\alpha$ mistakes in \emph{almost all} experiments. FDX targets these scenarios explicitly, by allowing it to happen with a small probability, and is thus more conservative than FDR. 
 
 \end{itemize}
 
@@ -132,12 +139,12 @@ While not very interesting for itself, this error measure gained popularity sinc
 \end{itemize}
 
 
-We conclude by noting that FWE, FDR, pFDR and mFDR are (currently) by far the most popular. So much so that it is actually hard to find published applied research using any other. 
+We conclude by noting that FWER, FDR, pFDR and mFDR are (currently) by far the most popular. So much so that it is actually hard to find published applied research using any other. 
 
 
 
 \subsection{Choosing Your Family}
-All the previous error measures assume that the family of hypotheses is known. As a researcher, defining the family is not an obvious task. The examples in section~\ref{sec:examples} include some trivial scenarios, in the sense that the family of hypotheses is clear. The section also includes some examples where the family is not trivial (see \ref{eg:imaging_genetics}) and its choice will depend on the scientific statement in mind.
+All the previous error measures are defined for a family of hypotheses is known, and indirectly assumed this family is all the hypotheses being tested in an experiment. This need not be the case, and defining the family of relevance may be an non obvious part of the researcher's work. The examples in section~\ref{sec:examples} include some trivial scenarios, in the sense that the family of hypotheses is clear. The section also includes some examples where the family is not trivial (see \ref{eg:imaging_genetics}) and its choice will depend on the scientific statement in mind.
 
 
 
@@ -164,15 +171,15 @@ Now consider a different scenario: The tests check for differences in personalit
 
 \subsection{\label{sub:fMRI}Functional Magnetic Resonance Imaging}
 
-Consider now the case of the neuroscientist, trying to locate the brain regions responsive to visual stimuli. He scaned a dozen subjects or so in the Magnetic Resonance Imaging (MRI) machine and recorded the brain's activation\footnote{ He actually measured the blood oxygenation level. Details can be found in \cite{lazar_statistical_2008}.} in response to the stimuli. To be precise, he measured the activation level at \emph{each} of several thousand brain locations, called Volumetric Picture Elements (voxels). Their exact number depending on the resolution of the MRI scan . With the measured activation levels at hand, the researcher can compute their correlation to the stimulus given. If the voxel-wise measurement is correlated with the stimulus, the location is considered ``active''. We see that localising activation actually consists of performing many local hypothesis tests: the null hypothesis of no correlation to the stimulus is tested at each voxel.
+Consider now the case of the neuroscientist, trying to locate the brain regions responsive to visual stimuli. He scaned a dozen subjects or so in the Magnetic Resonance Imaging (MRI) machine and recorded the brain's activation\footnote{ He actually measured the blood oxygenation level. Details can be found in \cite{lazar_statistical_2008}.} in response to the stimuli. To be precise, he measured the activation level at \emph{each} of several thousand brain locations, called Volumetric Picture Elements (voxels); Their exact number depending on the resolution of the MRI scan . With the measured activation levels at hand, the researcher can compute their correlation to the stimulus given. If the voxel-wise measurement is correlated with the stimulus, the location is considered ``active''. We see that localising activation actually consists of performing many local hypothesis tests: the null hypothesis of no correlation to the stimulus is tested at each voxel.
 
-Returning to multiplicity error rates; An error would mean he declared a voxel as responsive when it actually is not. This does not seem like a terrible mistake to make so the researcher should probably protect himself from large proportions of errors, and not from the making of one single error. FWER, k-FWER and Per Family Error Rate are thus excluded. Per Comparison Error Rate seems like a possible candidate, but it very liberal. One can actually gain power by including many ``junk'' hypotheses. To see this consider the case of infinitely many hypotheses tested. The proportion of errors will trivially be smaller than any $\alpha$ we pick. Our researcher is thus left with FDR and FDX as candidate error measures. Finally, FDR is chosen due to the plethora of procedures available to control it. 
+Returning to multiplicity error rates; An error would mean he declared a voxel as responsive when it actually is not. This does not seem like a terrible mistake to make so the researcher should probably protect himself from large proportions of errors, and not from the making of one single error. FWER, k-FWER and Per Family Error Rate are thus excluded. Per Comparison Error Rate seems like a possible candidate, but it very liberal. One can actually gain power by including many ``junk'' hypotheses. To see this consider the case of infinitely many hypotheses tested. The proportion of errors will trivially be smaller than any $\alpha$ we pick. Our researcher is thus left with FDR and FDX as candidate error measures. Since a very large number of hypotheses are being tested, procedures controlling the FDR or the FDX will probably have very similar performance. [citation?]
 
 
 \subsubsection{Functional Magnetic Resonance Imaging-- Cluster Level Inference}
 
 Returning to the neuroscientist from sec~\ref{sub:fMRI}-- recalling that the voxels are arbitrary volume units, defined by the technology of the MRI and not by entities of interest for inference-- he decides that a more interesting entity is a mass of contiguous activations. He thus decides that he is interested in spatially contiguous regions with activation larger than ``7'' (in some scale). These regions are known as ``excursion regions'', ``excellence sets'', ``blobs'' and possibly many other names. 
-After scanning a subject, he realises there are 30 contiguous regions which exceed 7. Knowing enough probability theory, he is able to compute a p-value for the volume of each of the 30 regions. If he rather not make any mistakes, he can control the FWER of the regions. Namely, controlling the probability of declaring any inactive regions as active. This is indeed the approach implemented in several brain analysis software packages, particularly SPM (\url{http://www.fil.ion.ucl.ac.uk/spm/}).
+After scanning a subject, he realizes there are 30 contiguous regions which exceed 7. Conscious that some are  due merely to chance variation, and knowing enough probability theory, he computes a p-value for the observed volume (exceeding 7), in each of the 30 regions. If he rather not make any mistakes, he can control the FWER of the regions. Namely, controlling the probability of declaring any inactive regions as active. This is indeed the approach implemented in several brain analysis software packages, particularly SPM (\url{http://www.fil.ion.ucl.ac.uk/spm/}).
 
 Alternatively, if the researcher can allow for some slack and accept false regions-- as long as their proportion is not too high-- he should probably use FDR control. Alas, the FDR defined in section~\ref{sub:fdr} assumes an a priori fixed and known number of hypotheses being tested ($m$). The number of excursion regions is data dependent, thus random and a priori unknown. Extensions of the FDR for the random-number-of-hypothesis case do exist. A rigorous exposition can be found in  \citet{siegmund_false_2011}. We do note however, that error-controlling \emph{procedures} for the random hypothesis case are not as abundant and studied as the fixed hypothesis case. The mathematical proofs would typically require some hard to justify assumptions. Simulation performances however, do seem promising \citep{chumbley_false_2009,chumbley_topological_2010}.
 
@@ -184,9 +191,9 @@ Returning again to the neuroscientist from sec~\ref{sub:fMRI}-- this time his pa
 
 
 \subsection{Genome Wide Association Studies}
-In a typical Genome Wide Association Study (GWAS) the geneticist will record the genetic information of many subjects (genotyping) with the aim of discovering associations between the genotype and the individuals' attributes (phenotype). Assuming a univariate phenotype, the researcher will perform some sort of regression between the phenotype and genetics attributes (titled single nucleotide polymorphism-- SNP). With today's technology, the number of SNPs considered in a typical GWAS is in the hundreds of thousands. To declare an association, a researcher will try to reject the no association hypothesis between \emph{each} SNP and the phenotype, leading to the simultaneous testing of several hundreds of thousands of hypotheses. 
-Since the researcher does not concern himself with the making of a mistake, as long as other associations discovered as true, he should choose FDR control. 
-Having said that, we should remark that it is also very common in GWAS, to use a p-value threshold of $10^{-7}$. This threshold is intended for FWER control, when searching over $500,000$ SNPs and using the Bonferonni procedure \cite{bush_chapter_2012}. 
+In a typical Genome Wide Association Study (GWAS) the geneticist will record the genetic information of many subjects (genotyping) with the aim of discovering associations between the genotype and the individuals' attributes (phenotype). Assuming a univariate phenotype, the researcher will perform some sort of regression between the phenotype and genetics attributes (titled single nucleotide polymorphism-- SNP). With today's technology, the number of SNPs considered in a typical GWAS is hundreds of thousands and above. To declare an association, a researcher will try to reject the no association hypothesis between \emph{each} SNP and the phenotype, leading to the simultaneous testing of several hundreds of thousands of hypotheses. 
+Since the researcher does not concern himself with the making of a single mistake, as long as other associations discovered as true, he should choose FDR control or one of its relatives discussed in section~\ref{sec:power}. 
+Having said that, we should remark that it is also very common in GWAS, to use a p-value threshold of $10^{-7}$. This threshold is intended for FWER control, when searching over $500,000$ SNPs and using the Bonferonni procedure \cite{bush_chapter_2012} for FWER control. 
 
 So FDR or FWER? Well, it is left for the researcher to decide, and ultimately depends on the implications of declaring false associations. 
 
@@ -238,8 +245,12 @@ The details can be found in \citet{benjamini_adjusting_2011}.
 
 \section{\label{sec:power}Power Considerations}
 
-The reader might have noticed that the different error measures in section~\ref{sec:measures_of_error} care only of the number of false discoveries. Our interest in detection sensitivity is naturally implicit in the procedures researchers employ. Otherwise, never rejecting any null hypothesis, will trivially control all of the error types in section~\ref{sec:measures_of_error}. 
-The introduction of power requires the consideration of the expected deviation from the null hypotheses. To see this, consider a scenario where the researcher is certain that if an effect exists, it would be of magnitude $\pm 7$ (in some arbitrary scale, say z-values). Performing a one sample $z$ or $t$ test, while ignoring this belief, will lead the researcher to reject all hypotheses with large (absolute) effects. Particularly, an effect of, say 20,  will be considered very extreme, with infinitesimally small p-values. But, when considering the fact that effects are expected to be near 7, the researcher might actually prefer to reject effects near 7 \emph{before} he rejects effects near 20. In the statistical terminology, this is simply an underpowered test constructed for the wrong alternative hypothesis. 
+The reader might have noticed that the different error measures in section~\ref{sec:measures_of_error} care only of the number of discoveries and false discoveries. Our interest in detection sensitivity is naturally implicit in the procedures researchers employ. Otherwise, never rejecting any null hypothesis, will trivially control all of the error types in section~\ref{sec:measures_of_error}. 
+Power can benefit from (a) knowledge of the proportion of signals in the noise ($ 1 - m_0 / m $) or (b) from an introduction the expected deviations from the null hypotheses. 
+
+To demonstrate (a), consider two researchers doing the same research. The first, which did some more reading on the topic, knows with complete certainty that there are 10 false null hypotheses (signals) in his 100 hypotheses testes. The second, being less through, has no access to this knowledge. Naturally, the first can exploit this information and start worrying about errors only after the 10'th rejection. The second, will have to be more conservative.
+
+To demonstrate (b), consider a scenario where the researcher is certain that if an effect exists, it would be of magnitude $\pm 7$ (in some arbitrary scale, say z-values). Performing a one sample $z$ or $t$ test, while ignoring this belief, will lead the researcher to reject all hypotheses with large (absolute) effects. Particularly, an effect of, say 20,  will be considered very extreme, with infinitesimally small p-values. But, when considering the fact that effects are expected to be near 7, the researcher might actually prefer to reject effects near 7 \emph{before} he rejects effects near 20. In the statistical terminology, this is simply an underpowered test constructed for the wrong alternative hypothesis. 
 
 Specifying the expected deviation from the null for each hypothesis tested is no easy task. There exist however, several procedures which use the multitude of hypotheses tested in an attempt to empirically characterise the deviations from the null~\footnote{Under mild assumptions regarding the form these deviations might take.}, and harness this information to gain power. Essentially all rely on estimators of the probability of a hypothesis being a true null given the value of some test statistic $z_i$. This is the posterior probability of the null, also named ``local fdr'' and denoted by $fdr(z_i)$. The details can be found in \cite{efron_microarrays_2008}. Note, that this is not an error measures but rather a test statistic.  
 
@@ -280,7 +291,7 @@ General purpose statistical software are built for flexibility in the analysis, 
 
 In the R programming environment \citep{r_development_core_team_r:_2011} the function \emph{p.adjust} in the \emph{stats} package will allow to perform the most common procedures. The references in the function documentation are a good starting point for learning about these procedures. 
 For FWER controlling procedures, in particular in the context of linear contrasts in regression models, the \emph{multcomp} package is a very good option. 
-For FDR control (and variants) many packages have been written. A good listing of these can be found in Korbinian Strimmer's web site: \url{http://strimmerlab.org/notes/fdr.html}. 
+For FDR control (and variants) many packages have been written. A good listing of these can be found in \citet{bretz_multiple_2010} or Korbinian Strimmer's web site: \url{http://strimmerlab.org/notes/fdr.html}. 
 We also note that the hierarchical testing scheme in section~\ref{eg:imaging_genetics} has not been implemented to the best of our knowledge. Its implementation would require a new syntax to describe the hypotheses' hierarchy (families) and is an open challenge. 
 
 In SAS, multiple testing procedures are incorporated within PROC MIXED and also in PROC MULTEST.  The canonical reference is \citet{westfall_multiple_2011}. 
