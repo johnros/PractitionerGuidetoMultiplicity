@@ -12,6 +12,17 @@
 \usepackage{setspace}
 \usepackage[numbers]{natbib}
 %\bibpunct{[}{]}{,}{n}{}{;}
+
+\newcommand*{\glossaryname}{Dictionary}
+\usepackage[nonumberlist]{glossaries}
+\newcommand{\dictentry}[2]{%
+  \newglossaryentry{#1}{name=#1,description={#2}}%
+  \glslink{#1}{}%
+}
+\makeglossaries
+
+
+
 \usepackage{hyperref}
 %\usepackage{glossaries}
 \usepackage{float}
@@ -19,12 +30,16 @@
 
 
 \DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `dirname #1`/`basename #1 .tif`.png}
-\doublespacing
+%\doublespacing
 %\makeglossaries
 
 
 \title{A Practitioner's Guide to Multiple Testing Error Rates}
-\author{Jonathan Rosenblatt}
+\author{Jonathan Rosenblatt \\
+	Department of Statistics and Operations Research,\\
+	The Sackler Faculty of Exact Sciences, \\
+	Tel Aviv University \\ 
+	Israel}
 \date{}                                         
 
 
@@ -281,6 +296,12 @@ The search for procedures with desirable properties under errors measures such a
 % Neomi
 
 
+
+
+\bibliographystyle{plainnat}
+\bibliography{PracticalGuideToMultiplicity}
+
+
 \appendix
 
 \section{\label{sec:on_your_pc} On Your Computer}
@@ -304,93 +325,35 @@ In SPSS, multiplicity corrections are typically found as part of the \emph{post-
 Some of the terms in the multiple-comparisons literature, have appeared in several other disciplines under different names. To ease the transition, and for completeness, we suggest a glossary. 
 In this glossary, we use as a reference the statistical nomenclature in table~\ref{tab:event_notation}. Also note that we use \emph{rate} for the average of a \emph{ratio} or a \emph{proportion}. The literature is not consistent regarding this convention, so that the terms might be found in use for both purposes.
 
-%\begin{table}[H]
-%  \centering
-%\begin{tabular}{|c|c|c|c|}
-%\hline \rule[-1ex]{0pt}{1.5ex} & Claimed nonsignificant & Claimed Significant & Total \\ 
-%\hline
-%\hline \rule[-1ex]{0pt}{1.5ex} Null & $U$=True Negatives & $V$=False Positives & $m_0$ \\ 
-%\hline \rule[-1ex]{0pt}{1.5ex} Nonnull & $T$=False Negatives & $S$=True Positives & $m_1$ \\ 
-%\hline \rule[-1ex]{0pt}{1.5ex} Total & $m-R$=Negatives & $R$=Positives & $m$ \\ 
-%\hline 
-%\end{tabular} 
-%  \caption{Classification of types of decisions made}
-%  \label{tab:engineering_notation}
-%\end{table}
+\begin{table}[H]
+\centering
+\caption{Glossary}
+\begin{tabular}{{llp{9cm}}}
+\hline \rule[-1ex]{0pt}{1.5ex} & Symbol & Names  \\ 
+\hline
+\hline \rule[-1ex]{0pt}{1.5ex} & $S$ & True Positives, Hits, True Discoveries  \\ 
+\hline \rule[-1ex]{0pt}{1.5ex} & $U$ & True Negatives  \\ 
+\hline \rule[-1ex]{0pt}{1.5ex} & $V$ & False Positives, Type $I$ Errors, False Discoveries, False Alarms  \\ 
+\hline \rule[-1ex]{0pt}{1.5ex} & $T$ & False Negatives, Type $II$ Errors, False Non Discoveries, Misses  \\ 
+\hline \rule[-1ex]{0pt}{1.5ex} & $V/R$ & False Discovery Proportion (FDP), False Discovery Ratio, False Detection Ratio/Proportion, False Alarm Ratio/Proportion, False Positive Ratio/Proportion, Fall-Out  \\ 
+\hline \rule[-1ex]{0pt}{1.5ex} & $E(V/R)$ & False Discovery Rate (FDR), False Detection Rate, False Alarm Rate, False Positives Rate  \\ 
+\hline \rule[-1ex]{0pt}{1.5ex} & $R/m$ & Accuracy  \\ 
+\hline \rule[-1ex]{0pt}{1.5ex} & $E(T/(m-R))$ & False Non Discovery Rate (FNR)  \\ 
+\hline \rule[-1ex]{0pt}{1.5ex} & $T/(m-R)$ & False Non Discovery Ratio  \\ 
+\hline \rule[-1ex]{0pt}{1.5ex} & $S/R$ & Positive Predictive Value (PPR), Precision, Hit Ratio  \\ 
+\hline \rule[-1ex]{0pt}{1.5ex} & $E(S/R)$ & Hit Rate  \\ 
+\hline \rule[-1ex]{0pt}{1.5ex} & $U/(m-R)$ & Negative Predictive Value  \\ 
+\hline \rule[-1ex]{0pt}{1.5ex} & $E(T)/m_1$ & Non Discovery Rate  \\ 
+\hline \rule[-1ex]{0pt}{1.5ex} & $T/m_1$ & Non Discovery Ratio  \\ 
+\hline \rule[-1ex]{0pt}{1.5ex} & $S/m_1$ & True Positive Ratio, Recall  \\ 
+\hline \rule[-1ex]{0pt}{1.5ex} & $U/m_1$ & Specificity, True Negative Ratio  \\ 
+\hline \rule[-1ex]{0pt}{1.5ex} & $E(U)/m_1$ & True Negative Rate  \\ 
+\hline \rule[-1ex]{0pt}{1.5ex} & $E(S/R)$ & True Positive Rate  \\ 
+\hline 
+\end{tabular}  
+\end{table}
 
 
-\begin{description}
-
-\item[Accuracy] $R/m$
-\item[Fall-out] $V/R$
-\item[False Alarm Rate (FDR)] $E(V/R)$
-\item[False Alarm Ratio] $V/R$
-\item[False Alarms] $V$
-\item[False Detection Proportion (FDP)] $V/R$
-\item[False Detection Rate (FDR)] $E(V/R)$
-\item[False Discoveries] $V$
-\item[False Discovery Ratio] $V/R$
-\item[False Discovery Proportion (FDP)] $V/R$
-\item[False Discovery Rate (FDR)] $E(V/R)$
-\item[False Negatives] $T$
-\item[False Non Discoveries] $T$
-\item[False Non Discovery Rate (FNR)] $E(T/(m-R))$
-\item[False Non Discovery Ratio] $T/(m-R)$
-\item[False Positive Rate] $E(V/R)$
-\item[False Positive Ratio] $V/R$
-\item[False Positives] $V$
-\item[Hit Rate] $E(S/R)$
-\item[Hit Ratio] $S/R$
-\item[Hits] $S$
-\item[Misses] $T$
-\item[Negative Predictive Value] $U/(m-R)$
-\item[Non Discovery Rate] $E(T)/m_1$
-\item[Non Discovery Ratio] $T/m_1$
-\item[Positive Predictive Value (PPR)] $S/R$
-\item[Precision] $S/R$
-\item[Recall] $S/m_1$
-\item[Specificity] $U/m_1$
-\item[True Discoveries] $S$
-\item[True Negative Rate] $E(U)/m_1$
-\item[True Negative Ratio] $U/m_1$
-\item[True Negatives] $U$
-\item[True Positive Rate] $E(S/R)$
-\item[True Positive Ratio] $S/m_1$
-\item[True Positives] $S$
-\item[Type $I$ Errors] $V$
-\item[Type $II$ Errors] $T$
-
-
-\end{description}
-
-
-
-
-
-%\begin{description}
-%\item[$V$:] False Positives, False Alarms, Type I Errors, False Discoveries
-%\item[$T$:] False Negatives, False Non Discoveries, Misses, Type $II$ errors.
-%\item[$S$:] True Positives, Hits, True Discoveries.
-%\item[$U$:] True Negatives.
-%\item[$S/R$:] Hit Ratio, Precision, Positive Predictive Value.
-%\item[$E(S/R)$:] True Positive Rate, Hit Rate.
-%\item[$S/m_1$:] Recall, True Positive Ratio
-%\item[$R/m$:] Accuracy.
-%\item[$U/m_1$:] Specificity, True Negative Ratio.
-%\item[$E(U)/m_1$:] True Negative Rate.
-%\item[$V/R$:] False Discovery Proportion, False Discovery Proportion Ratio, False Detection Proportion, False Alarm Ratio, False Positive Ratio, Fall-out. 
-%\item[$E(V/R)$:] False Discovery Rate, False Detection Rate, False Alarm Rate, False Positive Rate. 
-%\item[$U/(m-R)$:] Negative Predictive Value.
-%\item[$T/(m-R)$:] False Non Discovery Ratio.
-%\item[$E(T/(m-R))$:] False Non Discovery Rate.
-%\item[$T/m_1$:] Non Discovery Ratio.
-%\item[$E(T)/m_1$:] Non Discovery Rate.
-%\end{description}
-
-
-
-\bibliographystyle{plainnat}
-\bibliography{PracticalGuideToMultiplicity}
 
 
 \end{document}  

@@ -6,4 +6,9 @@
 *.log
 *.bbl
 *.blg
+*.glo
+*.ist
+*.out
+*.gz
+*~
 PractitionersGuidetoMultiplicity.pdf
