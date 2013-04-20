@@ -23,8 +23,9 @@
 
 
 
+\usepackage[hyphens]{url}
+
 \usepackage{hyperref}
-%\usepackage{glossaries}
 \usepackage{float}
 
 
@@ -54,8 +55,14 @@
 It is quite common in modern research, for a researcher to test many hypotheses. 
 The statistical (frequentist) hypothesis testing framework, does not scale with the number of hypotheses in the sense that na\"{i}vely performing many hypothesis tests will probably yield many false findings. 
 Indeed, statistical ``significance'' is evidence for the presence of a signal within the noise expected in a single test, not in a multitude. 
-In order to protect himself from an uncontrolled number of erroneous findings, a researcher has to consider of the type or errors he wishes to avoid and select the adequate procedure for that particular error type and data structure. 
-A quick search of the tag \emph{[multiple-comparisons]} in the statistics Questions \& Answers web site Cross Validates (\url{http://stats.stackexchange.com}) demonstrates the amount of confusion this task can actually cause. This was also a point made at the 2009 Multiple Comparisons conference in Tokyo \citep[][section 4.4]{benjamini_simultaneous_2010}. 
+In order to protect himself from an uncontrolled number of erroneous findings, a researcher has to consider of the type of errors he wishes to avoid and select the adequate procedure for that particular error type and data structure. 
+
+In practice, the selection of the proper error rate, might cause the researcher some confusion. This was a point made at the 2009 Multiple Comparisons conference in Tokyo \citep[][section 4.4]{benjamini_simultaneous_2010}, which is demonstrated in the following question from the statistics Questions \& Answers web site \emph{Cross Validated}~\footnote{ See \url{http://stats.stackexchange.com/questions/26588/multiple-fdr-corrected-experiments-using-the-same-data}. Accessed on Apr 20, 2013} :
+\begin{quotation}
+I am testing many (500,000) genetic variants, and the tests are FDR corrected and give me a q-value. Normally I would just call everything with $q < .05$ significant. But in this case I am testing those same genetic variants in two other related experiments (not using exactly the same individuals, but the samples may overlap). What to do? Would changing the significance threshold for $q$ to $.05/3=.0167$ be an option?
+\end{quotation}
+This example is  further discussed in section~\ref{sec:cross_validated}. 
+
 In an attempt to offer guidance, we review possible error types for multiple testing (sec~\ref{sec:measures_of_error}) and demonstrate them with some practical examples (sec \ref{sec:examples}), which clarify the formalism of sec~\ref{sec:measures_of_error}. Finally, we include some notes on the software implementations of the methods discussed, in appendix~\ref{sec:on_your_pc}.
 
 The emphasis of this manuscript is on the error-rates, and not on the procedures themselves. For the purpose of selecting the appropriate procedure consult your favourite software's documentation (see our appendix~\ref{sec:on_your_pc}). Alternatively, \citet{farcomeni_review_2008} can serve as a good reference. 
@@ -168,6 +175,17 @@ All the previous error measures are defined for a family of hypotheses is known,
 
 
 
+\subsection{\label{sec:cross_validated}Cross Validated Example}
+In this example, the researcher has seemingly already selected the desired error measure to control for-- FDR. It is actually the grouping families that are unclear. Several options can be considered:
+\begin{enumerate}
+\item[(a)] FDR control over all genetic associations found (regardless of the experiment)? %$\{genetics \; variantes\} X \{experimantes\}$
+\item[(b)] FDR control over all genetic associations found within each experiment? Possibly, with no control overall? [TODO]
+\end{enumerate}¥
+
+
+
+
+
 \subsection{Tukey's Psychological Exams}
 In his 1953 unpublished paper: ``The Problem of Multiple Comparisons'' \citep{benjamini_john_2002} and later, when lecturing at Princeton University \citep{donoho_higher_2004}, Prof. John Tukey would tell the tale of a young psychologist. After administering 250 tests he finds that 11 were significant at the 0.05 level. After the initial feeling of satisfaction he consults a senior researcher, only to discover his findings are rather poor as one  would expect 12.5 significant tests due to chance alone. Having only 11 significant results is actually disappointing.
 
@@ -267,7 +285,10 @@ To demonstrate (a), consider two researchers doing the same research. The first,
 
 To demonstrate (b), consider a scenario where the researcher is certain that if an effect exists, it would be of magnitude $\pm 7$ (in some arbitrary scale, say z-values). Performing a one sample $z$ or $t$ test, while ignoring this belief, will lead the researcher to reject all hypotheses with large (absolute) effects. Particularly, an effect of, say 20,  will be considered very extreme, with infinitesimally small p-values. But, when considering the fact that effects are expected to be near 7, the researcher might actually prefer to reject effects near 7 \emph{before} he rejects effects near 20. In the statistical terminology, this is simply an underpowered test constructed for the wrong alternative hypothesis. 
 
-Specifying the expected deviation from the null for each hypothesis tested is no easy task. There exist however, several procedures which use the multitude of hypotheses tested in an attempt to empirically characterise the deviations from the null~\footnote{Under mild assumptions regarding the form these deviations might take.}, and harness this information to gain power. Essentially all rely on estimators of the probability of a hypothesis being a true null given the value of some test statistic $z_i$. This is the posterior probability of the null, also named ``local fdr'' and denoted by $fdr(z_i)$. The details can be found in \cite{efron_microarrays_2008}. Note, that this is not an error measures but rather a test statistic.  
+Specifying the expected deviation from the null for each hypothesis tested is no easy task. There exist however, several procedures which use the multitude of hypotheses tested in an attempt to empirically characterise the deviations from the null~\footnote{Under mild assumptions regarding the form these deviations might take.}, and harness this information to gain power. Essentially all rely on estimators of the probability of a hypothesis being a true null given the value of some test statistic $z_i$. This is the posterior probability of the null, also named ``local fdr'' and denoted by $fdr(z_i)$. The details can be found in \cite{efron_microarrays_2008}. 
+This magnitude-- the probability of being null given the data-- is not an error rate but rather a test statistic. It is however a rather intuitive test statistic. So much so, that many authors, set the rejection criterion to $fdr(z_i)\leq 0.2$. Which lends itself to the interpretation that results with frequencies smaller than 1 in 5, under the null assumption, are ``dangerously prone to wasting investigatorsÕ resources''~\cite{efron_microarrays_2008}. 
+
+While intuitive and powerful, a researcher interested in protection from a particular error type, the relation between the $fdr(z_i)\leq 0.2$ criterion to the error rate is unclear.[TODO]
 
 Using the notation presented in table~\ref{tab:event_notation}, we can specify many error measures which capture the idea of maximal power subject to the false detections being kept at a low level:
 
@@ -294,6 +315,7 @@ The search for procedures with desirable properties under errors measures such a
 % Kornelius
 % David
 % Neomi
+% Danni
 
 
 
