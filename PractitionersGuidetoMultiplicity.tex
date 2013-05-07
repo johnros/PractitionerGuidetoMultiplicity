@@ -38,6 +38,10 @@
 \theoremstyle{definition}
 \newtheorem{scenario}{Scenario}[section]
 
+\theoremstyle{definition}
+\newtheorem{remark}{Remark}[section]
+
+
 
 \title{A Practitioner's Guide to Multiple Testing Error Rates}
 \author{Jonathan Rosenblatt \\
@@ -126,11 +130,13 @@ $$E \left( FDP \right)$$
 where $E(.)$ denotes the average over all possible experimental results.
 
 
-Some remarks follow:
-\begin{enumerate}
-\item The FDR error rate has become synonymous with the Benjamini-Hochberg procedure presented in \citep{benjamini_controlling_1995} . This is plain wrong and confusing. Benjamini-Hochberg is a procedure that does indeed offer FDR control in particular setups, but it is only one of many.
-\item In the context of FDR, there need not be an $\alpha=0.05$ convention. Researchers are free to choose the level of error they see adequate for their particular research. Obviously, an error level of $\alpha=0.5$ might be hard to defend from critique. Having said that, since FDR control does offer FWER control in the weak sense, the $\alpha=0.05$ convention might be justifiable.
-\end{enumerate}
+\begin{remark}
+The FDR error rate has become synonymous with the Benjamini-Hochberg procedure presented in \citep{benjamini_controlling_1995} . This is plain wrong and confusing. Benjamini-Hochberg is a procedure that does indeed offer FDR control in particular setups, but it is only one of many.
+\end{remark}
+
+\begin{remark}
+In the context of FDR, there need not be an $\alpha=0.05$ convention. Researchers are free to choose the level of error they see adequate for their particular research. Obviously, an error level of $\alpha=0.5$ might be hard to defend from critique. Having said that, since FDR control does offer FWER control in the weak sense, the $\alpha=0.05$ convention might be justifiable.
+\end{remark}
 
 
 
@@ -236,7 +242,7 @@ Return again to the neuroscientist from sec~\ref{sub:fMRI}. This time his patien
 
 
 
-\subsection{Genome Wide Association Studies}
+\subsection{\label{sec:GWAS}Genome Wide Association Studies}
 In a typical Genome Wide Association Study (GWAS) the geneticist will record the genetic information of many subjects (genotyping) with the aim of discovering associations between the genotype and the individuals' attributes (phenotype). Assuming a univariate phenotype, the researcher will perform some sort of regression between the phenotype and genetic attributes (titled single nucleotide polymorphism-- SNP). With today's technology, the number of SNPs considered in a typical GWAS is hundreds of thousands. To declare an association, a researcher will try to reject the no association hypothesis between \emph{each} SNP and the phenotype, leading to the simultaneous testing of several hundreds of thousands of hypotheses. 
 Since the researcher does not concern himself with the making of a single mistake, as long as other associations discovered as true, he should choose FDR control or one of its relatives discussed in Section~\ref{sec:power}. 
 That said, it is also very common in GWAS, to use a p-value threshold of $10^{-7}$. This threshold is intended for FWER control, when searching over $500,000$ SNPs and using the Bonferonni procedure \cite{bush_chapter_2012} for FWER control. 
@@ -313,32 +319,36 @@ The details can be found in \cite{benjamini_adjusting_2013}.
 \section{Simultaneous versus Selective Inference}
 Up to this point, we have motivated the choice of error measure by a mere ``error accounting''. 
 There is actually another motivation, which can make the choice of the error measure quite obvious once it has been recognized. 
-We demonstrate this on the ANOVA example from Section~\ref{sec:anova}. Recalling that one of the goals of the NAEP study is to compare mathematics proficiency scores between states, and these are nested within regions. Consider the following four scenarios:
+We demonstrate this on the GWAS example from Section~\ref{sec:GWAS}. 
+Also, in the spirit of \citet[sec.5]{scott_exploration_2006}, we introduce a possible financial consideration: selected SNPs will be sent for further investigation, so they can possibly be selected on the basis of future expected expenses, which are incurred if no association is found in the followup investigation.
+We emphasize that the computation of the expected expenses is data driven, and refer to \cite{scott_exploration_2006} for details.
 
-
+Consider the following four scenarios:
 
 \begin{scenario}
-A researcher wishes to find differences between regions so that any particular difference will be falsely detected in only  few samples.
+A researcher searching for significant associations, concerned with the proportion of experiments that will lead him to a false finding on any particular SNP.
 \label{e.g.:marginal_noSelection}
 \end{scenario}
 
 \begin{scenario}
-A researcher wishes to find differences between regions so that any particular combination of differences will be falsely detected in only  few samples.
+A researcher searching for significant associations, concerned with the proportion of experiments that will lead him to a false finding on any combination of SNPs.
 \label{e.g.:simultanous_noSelection}
 \end{scenario}
 
 \begin{scenario}
-?
-\label{e.g.:simultanous_Selection}
-\end{scenario}
-
-\begin{scenario}
-A researcher wishes to find differences between regions so that any particular difference will be falsely detected in only  few samples.
+A researcher searching for significant associations, concerned with the proportion of experiments that will lead him to a false finding on any on any particular SNP which has showed low expected expenses.
 \label{e.g.:marginal_Selection}
 \end{scenario}
 
-As the differences between these examples might be subtle, Table~\ref{tab:simultanous_vs_selective} offers their classification with respect to two criteria: (a) Is there a preliminary selection stage? In this case, selecting states that belong to interesting regions. 
-(b) Are errors accounted per finding or per combination of findings? In this case, per region/state, or per combination of regions/stages.
+\begin{scenario}
+A researcher searching for significant associations, concerned with the proportion of experiments that will lead him to a false finding on any combination of SNPs which have showen low expected expenses.
+\label{e.g.:simultanous_Selection}
+\end{scenario}
+
+
+For clarification Table~\ref{tab:simultanous_vs_selective} offers their classification with respect to two criteria: 
+(a) Is there a preliminary selection stage? In this case, selecting SNPs according to an expected loss.
+(b) Are errors accounted per finding or per combination of findings? In this case, SNP or per combination of SNPs.
 
 \begin{table}[h]
   \centering
@@ -353,14 +363,26 @@ As the differences between these examples might be subtle, Table~\ref{tab:simult
   \label{tab:simultanous_vs_selective}
 \end{table}
 
-This distinction is of practical importance as they immediately suggest the appropriate error of interest. 
+These distinctions are of practical importance as they immediately suggest the appropriate measure of error. 
+
 Scenario~\ref{e.g.:marginal_noSelection} is a case of many independent decisions, which does not need any correction for the multitude of hypotheses tested. 
-Scenario~\ref{e.g.:simultanous_noSelection} is a classic simultaneous inference problem which call for FWER control.
-Scenario~\ref{e.g.:}
 
+Scenario~\ref{e.g.:simultanous_noSelection} is a classic simultaneous inference problem which calls for strong FWER control.
 
+Scenario~\ref{e.g.:marginal_Selection} is a selective-inference problem.  Strong FWER control is a possible error measure; as it protects from \emph{any} combination of false findings, it naturally protects from the particular combination which passed the selection stage. This, however, is a conservative approach: why protect from all possible combinations if we only need protection from the combinations of selected SNPs\footnote{ This is analogous to the over-protection of using a Scheffe correction in ANOVA, which offers protection against all possible contrasts, even if we consider only a small subset of possible contrasts. See [find citation] for details.}? 
+FDR or FDR as good error measures for this scenario, although the exact procedure to be used needs to be tailored for the particular selection used. [cite example?]
 
+Scenario~\ref{e.g.:simultanous_Selection} is a simultaneous selective-inference problem.  
+Requiring \emph{simultaneous} inference sets the bar, which is satisfied only by FWER. 
+The presence of the selection, however, makes most off-the-shelf FWER controlling procedures overly conservative, so that tailoring the procedure for the particular selection in use might provide a power gain. [cite example?]
 
+\begin{remark}
+The financial aspect of the selection mechanism is immaterial. It was merely selected to demonstrate a data-driven selection stage preceding a hypothesis testing stage.
+\end{remark}
+
+\begin{remark}
+The concepts of simultaneous versus selective inference, is typically demonstrated on post-selection confidence intervals~\cite{benjamini_false_2005}. We did not use this type of example as we wished to focus on testing problems. 
+\end{remark}
 
 
 
