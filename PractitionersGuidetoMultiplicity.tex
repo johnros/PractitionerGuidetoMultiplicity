@@ -6,6 +6,7 @@
 %\usepackage[parfill]{parskip}    % Activate to begin paragraphs with an empty line rather than an indent
 \usepackage{graphicx}
 \usepackage{amsmath}
+\usepackage{amsthm}
 %\usepackage{amssymb}
 %\usepackage{amsfonts}   % if you want the fonts
 \usepackage{epstopdf}
@@ -34,13 +35,17 @@
 %\makeglossaries
 
 
+\theoremstyle{definition}
+\newtheorem{scenario}{Scenario}[section]
+
+
 \title{A Practitioner's Guide to Multiple Testing Error Rates}
 \author{Jonathan Rosenblatt \\
 	Department of Statistics and Operations Research,\\
 	The Sackler Faculty of Exact Sciences, \\
 	Tel Aviv University \\ 
 	Israel}
-\date{}                                         
+%\date{}                                         
 
 
 
@@ -49,7 +54,7 @@
 \maketitle
 
 
-\section{Introduction}
+\section{\label{sec:introduction}Introduction}
 
 It is quite common in modern research for a researcher to test many hypotheses. 
 The statistical (frequentist) hypothesis testing framework does not scale with the number of hypotheses in the sense that na\"{i}vely performing many hypothesis tests will probably yield many false findings. 
@@ -64,8 +69,11 @@ This example is  further discussed in Section~\ref{sec:cross_validated}.
 
 To offer guidance, we review possible error types for multiple testing (sec~\ref{sec:measures_of_error}) and demonstrate them with some practical examples (sec \ref{sec:examples}) which clarify the formalism of sec~\ref{sec:measures_of_error}. Finally, in appendix~\ref{sec:on_your_pc}, we include some notes on the software implementations of the methods discussed.
 
-The emphasis of this manuscript is on the error rates, and not on the procedures themselves. For the purpose of selecting the appropriate procedure consult your favorite software's documentation (see our appendix~\ref{sec:on_your_pc}). Alternatively, \citet{farcomeni_review_2008} can serve as a good reference. 
-In this manuscript, we do try to name several procedures  where appropriate.  p-value adjustment will not be discussed as it is procedure specific; it is the choice of a procedure that defines the p-value adjustment, and not the error rate itself.
+A multiplicity control procedure (e.g. Bonferroni, Benjamini-Hochberg, \dots) is a data manipulation process-- an algorithm-- that guarantees that a preselected error rate is no larger than a preselected value. A typical procedures will actually offer guarantees vis-\`a-vis several error measures simultaneously. The emphasis of this manuscript is however on the error rates, and not on the multiplicity control procedures themselves. 
+
+
+For the purpose of selecting the appropriate procedure consult your favorite software's documentation (see our appendix~\ref{sec:on_your_pc}). Alternatively, \citet{farcomeni_review_2008} can serve as a good reference. 
+p-value adjustment will not be discussed as it is procedure specific; it is the choice of a procedure that defines the p-value adjustment, and not the error rate itself.
 Simultaneous confidence intervals will, also, not be discussed.  
 
 
@@ -100,6 +108,10 @@ Table~\ref{tab:event_notation} introduces the nomenclature which has become stan
 
 \subsubsection{Weak and Strong Control the Family Wise Error Rate}
 The probability of any particular inference procedure of making a false finding depends on the existence of true effects. FWER control in the ``weak'' sense refers to procedures which guarantee low FWER when there are no true effects at all, i.e., when all null hypotheses are correct. 
+
+Detecting the existence of \emph{any} phenomena ($m_1>1$?) is a simpler task that actually identifying these phenomena. Lack of weak FWER control means that we have no error guarantees even regarding this simple task. 
+As mentioned in Section~\ref{sec:introduction}, a multiplicity control procedure might offer guarantees with respect to several error measure simultaneously. Weak FWER control should, and typically is, a minimal requirement. 
+
 FWER control in the ``strong'' sense is the complementing concept, referring to procedures which guarantee FWER control even in the presence of some true effects, i.e., when not all null hypotheses are correct. 
 As their names imply, ``strong'' control is the stricter criterion, which entails ``weak'' control.
 
@@ -186,7 +198,7 @@ Say the tests consist of new candidate clinical diagnostics for condition X. Mak
 Now consider a different scenario: The tests check for differences in personality attributes between genders. Making an error means that the psychologist might believe male and female differ in a way they actually do not. The researcher does not consider this a serious mistake, as long as many other true differences are discovered. In this setup, the researcher should control the FDR -- probably using the Benjamini-Hochberg procedure \citep{benjamini_controlling_1995}. Allowing for some mistakes will allow the researcher to enjoy a sensitivity gain compared to FWER-controlling-procedures. The interpretation of the findings should be done in accord with the error measure employed.
 
 
-\subsection{ANOVA}
+\subsection{\label{sec:anova}ANOVA}
 In their \citeyear{williams_controlling_1999} paper, \citeauthor*{williams_controlling_1999}, analyze the National Assessment of Educational Progress (NAEP) 1990 and 1992 data. This data consists of the average eighth grade mathematics proficiency scores for the 34 states that participated in both 1990 and 1992 NAEP Trial State Assessment (TSA). Comparisons are made between regions (Central, Northeast, Southeast and West), years (1990,1992), states nested within regions, and the Year~$\times$~Region interaction. 
 
 We start by noting that this one study, provides four families of hypotheses. Indeed, a falsely discovered difference between regions, as an example, is of no concern when comparing years, states or regional changes.
@@ -206,7 +218,8 @@ So why FWER? If, for example, the study is analyzed in the context of discrimina
 
 Consider now the case of the neuroscientist, trying to locate the brain regions responsive to visual stimuli. He has scanned a dozen subjects or so in the Magnetic Resonance Imaging (MRI) machine and recorded the brain's activation\footnote{ He actually measured the blood oxygenation level. Details can be found in \cite{lazar_statistical_2008}.} in response to the stimuli. To be precise, he measured the activation level at \emph{each} of several thousand brain locations, called Volumetric Picture Elements (voxels); their exact number depending on the resolution of the MRI scan . With the measured activation levels in hand, the researcher can compute their correlation to the stimulus given. If the voxel-wise measurement is correlated with the stimulus, the location is considered ``active''. We see that localizing activation actually consists of performing many local hypothesis tests: the null hypothesis of no correlation to the stimulus is tested at each voxel.
 
-Returning to multiplicity error rates; an error would mean the researcher declared a voxel as responsive when it actually is not. This does not seem like a terrible mistake to make, so the researcher should probably protect himself from large proportions of errors, and not from the making of one single error. FWER, k-FWER and Per Family Error Rate are thus excluded. Per Comparison Error Rate seems like a possible candidate, but it is very liberal. One can actually gain power by including many ``junk'' hypotheses. To see this, consider the case of infinitely many hypotheses tested. The proportion of errors will trivially be smaller than any $\alpha$ we pick. Our researcher is thus left with FDR and FDX as candidates for measurement of error. Since a large number of hypotheses are being tested, procedures controlling the FDR or the FDX will probably have very similar performance. [citation?]
+Returning to multiplicity error rates; an error would mean the researcher declared a voxel as responsive when it actually is not. This does not seem like a terrible mistake to make, so the researcher should probably protect himself from large proportions of errors, and not from the making of one single error. FWER, k-FWER and Per Family Error Rate are thus excluded. Per Comparison Error Rate seems like a possible candidate, but it is very liberal. One can actually gain power by including many ``junk'' hypotheses. To see this, consider the case of infinitely many hypotheses tested. The proportion of errors will trivially be smaller than any $\alpha$ we pick. Our researcher is thus left with FDR and FDX as candidates for measurement of error. 
+In the case the researcher has no clear favorite from within these two measures, a possible consideration at this stage might be the availability, simplicity and power of controlling procedures. These considerations give preference, at the time of writing, to FDR over FDX. 
 
 
 \subsubsection{Functional Magnetic Resonance Imaging-- Cluster Level Inference}
@@ -236,12 +249,21 @@ So FDR or FWER? It is left for the researcher to decide, and it ultimately depen
 
 \subsection{\label{sec:cross_validated}Cross Validated Example}
 
-In this example, the researcher is looking for associations between SNPs and three distinct\footnote{ It is actually implicit wether these are distinct phenotypes or not. I have assumed they are distinct, because of the ``subject overlap'' comment.} phenotypes. The error measure has seemingly already been selected-- it is FDR. These are the grouping families that are unclear. 
+In this example, the researcher is looking for associations between SNPs and three distinct\footnote{ It is actually implicit whether these are distinct phenotypes or not. I have assumed they are distinct, because of the ``subject overlap'' comment.} phenotypes. The error measure has already been selected. The family groupings are unclear. 
 The options being (a) accounting for errors only within each experiment, leading to three families of hypotheses, or (b) global error accounting, leading to a single family. 
 
-An error means a nonexistent association has been found between a SNP and a trait. One could argue that we wish to control for the errors made in science as a whole, and particularly in the genetic associations found. It is, however, unusual to concatenate errors over different phenomena, and for good reason. 
-To see why, consider a case where several Mendelian traits\footnote{ A Mendelian trait is one that is well determined by the state of a single gene.} are analyzed alongside other phenotype of complex inheritance mode. Clearly, we do not want the obvious associations of the Mendelian traits to allow for the sneaking of false association declarations. We thus conclude, that each study should constitute a different family of hypotheses, with its own error control.
+Both approaches have their advantages and disadvantages. 
+By keeping the experiments separate we gain power but the global error rate is no longer $\alpha$. \citet{yekutieli_hierarchical_2008} has conjectured, and proven for some cases, that under strategy (a) with $\alpha$ level FDR control within each experiment, then the \emph{global} FDR should actually be close to 
+\begin{equation} 
+	FDR \approx \alpha \cdot \frac{\text{Total discoveries} + 
+	\text{No. of experiments}}{\text{Total discoveries}+1} \label{eq:families_FDR}
+\end{equation}
 
+Eq.~\ref{eq:families_FDR} captures the intuition that the more experiments performed while controlling only for errors within the experiment, the global error rate might inflate. 
+
+The discussed problem includes three experiments, assumingly looking for three different phenomena. The fact we discuss \emph{three} experiments, which were all conducted by the same researcher, is quite arbitrary. Why not control for the errors performed in the whole of science? Or at least in all genetic association studies. 
+A proper discussion of this matter requires an unplanned detour into the philosophy and sociology of science, and is not part of this guide. 
+We will conclude by remarking that combining errors over different phenomena is indeed  desirable~\cite{ioannidis_why_2005}, yet rarely performed in practice. 
 
 
 
@@ -288,6 +310,68 @@ The details can be found in \cite{benjamini_adjusting_2013}.
 
 
 
+\section{Simultaneous versus Selective Inference}
+Up to this point, we have motivated the choice of error measure by a mere ``error accounting''. 
+There is actually another motivation, which can make the choice of the error measure quite obvious once it has been recognized. 
+We demonstrate this on the ANOVA example from Section~\ref{sec:anova}. Recalling that one of the goals of the NAEP study is to compare mathematics proficiency scores between states, and these are nested within regions. Consider the following four scenarios:
+
+
+
+\begin{scenario}
+A researcher wishes to find differences between regions so that any particular difference will be falsely detected in only  few samples.
+\label{e.g.:marginal_noSelection}
+\end{scenario}
+
+\begin{scenario}
+A researcher wishes to find differences between regions so that any particular combination of differences will be falsely detected in only  few samples.
+\label{e.g.:simultanous_noSelection}
+\end{scenario}
+
+\begin{scenario}
+?
+\label{e.g.:simultanous_Selection}
+\end{scenario}
+
+\begin{scenario}
+A researcher wishes to find differences between regions so that any particular difference will be falsely detected in only  few samples.
+\label{e.g.:marginal_Selection}
+\end{scenario}
+
+As the differences between these examples might be subtle, Table~\ref{tab:simultanous_vs_selective} offers their classification with respect to two criteria: (a) Is there a preliminary selection stage? In this case, selecting states that belong to interesting regions. 
+(b) Are errors accounted per finding or per combination of findings? In this case, per region/state, or per combination of regions/stages.
+
+\begin{table}[h]
+  \centering
+    \caption{Classification of types of inference}
+\begin{tabular}{|c|c|c|}
+\hline \rule[-1ex]{0pt}{1.5ex}    & Simultaneous Inference & Marginal Inference \\ 
+\hline
+\hline \rule[-1ex]{0pt}{1.5ex}  With Selection & Scenario~\ref{e.g.:simultanous_Selection} & Scenario~\ref{e.g.:marginal_Selection} \\ 
+\hline \rule[-1ex]{0pt}{1.5ex}  No Selection &  Scenario~\ref{e.g.:simultanous_noSelection} & Scenario~\ref{e.g.:marginal_noSelection} \\ 
+\hline 
+\end{tabular} 
+  \label{tab:simultanous_vs_selective}
+\end{table}
+
+This distinction is of practical importance as they immediately suggest the appropriate error of interest. 
+Scenario~\ref{e.g.:marginal_noSelection} is a case of many independent decisions, which does not need any correction for the multitude of hypotheses tested. 
+Scenario~\ref{e.g.:simultanous_noSelection} is a classic simultaneous inference problem which call for FWER control.
+Scenario~\ref{e.g.:}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 \section{\label{sec:power}Power Considerations}
 
 The reader might have noticed that the different error measures in Section~\ref{sec:measures_of_error} care only of the number of discoveries and false discoveries. Our interest in detection sensitivity is naturally implicit in the procedures researchers employ. Otherwise, never rejecting any null hypothesis, will trivially control all of the error types in Section~\ref{sec:measures_of_error}. 
@@ -324,12 +408,8 @@ The search for procedures with desirable properties under errors measures such a
 
 
 
-\section{Acknowledgments}
-% Yoav
-% Kornelius
-% David
-% Neomi
-% Danni
+%\section{Acknowledgments}
+%I wish to thank the many friends and colleagues who contributed of their time and knowledge, to improve clarify this manuscript: Prof. Yoav Benjamini, Dr. Daniel Yekutieli, Kornelius Rohmeyer, David Golan, Neomi Singer and Samuel Cohen.
 
 
 
