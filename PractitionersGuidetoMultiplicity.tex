@@ -61,24 +61,24 @@
 \section{\label{sec:introduction}Introduction}
 
 It is quite common in modern research for a researcher to test many hypotheses. 
-The statistical (frequentist) hypothesis testing framework does not scale with the number of hypotheses in the sense that na\"{i}vely performing many hypothesis tests will probably yield many false findings. 
-Indeed, statistical ``significance'' is evidence for the presence of a signal within the noise expected in a single test, not in a multitude. 
-For protection from an uncontrolled number of erroneous findings, a researcher has to consider the type of errors he wishes to avoid and select the adequate procedure for that particular error type and data structure. 
+The statistical (frequentist) hypothesis testing framework does not scale with the number of hypotheses in the sense that na\"{i}vely performing many hypothesis tests will probably yield many false findings;  ``false'' in the sense they will not be replicated.
+Indeed, classical statistical ``significance'' is evidence for the presence of a signal within the noise expected in a single test, not in a multitude. 
+For protection from an uncontrolled number of erroneous findings, a researcher has to consider the type of errors, or non-replications, he wishes to avoid. The researcher can then select the adequate procedure for that particular error type and data structure, or alternatively estimate that error type for a particular set of candidate findings. 
 
 In practice, the selection of the proper error rate might cause the researcher some confusion. This point was made at the 2009 Multiple Comparisons conference in Tokyo \citep[][Section 4.4]{benjamini_simultaneous_2010}, demonstrated in the following question from the statistics Questions \& Answers web site \emph{Cross Validated}~\footnote{ See \url{http://stats.stackexchange.com/questions/26588/multiple-fdr-corrected-experiments-using-the-same-data}. Accessed on Apr 20, 2013}~:
 \begin{quotation}\em
 I am testing many (500,000) genetic variants, and the tests are FDR corrected and give me a q-value. Normally I would just call everything with $q < .05$ significant. But in this case I am testing those same genetic variants in two other related experiments (not using exactly the same individuals, but the samples may overlap). What to do? Would changing the significance threshold for $q$ to $.05/3=.0167$ be an option?
 \end{quotation}
-This example is  further discussed in Section~\ref{sec:cross_validated}. 
+This particular example is further discussed in Section~\ref{sec:cross_validated}. 
 
 To offer guidance, we review possible error types for multiple testing (sec~\ref{sec:measures_of_error}) and demonstrate them with some practical examples (sec \ref{sec:examples}) which clarify the formalism of sec~\ref{sec:measures_of_error}. Finally, in appendix~\ref{sec:on_your_pc}, we include some notes on the software implementations of the methods discussed.
 
-A multiplicity control procedure (e.g. Bonferroni, Benjamini-Hochberg, \dots) is a data manipulation process-- an algorithm-- that guarantees that a preselected error rate is no larger than a preselected value. A typical procedures will actually offer guarantees vis-\`a-vis several error measures simultaneously. The emphasis of this manuscript is however on the error rates, and not on the multiplicity control procedures themselves. 
+A multiplicity control procedure (e.g. Bonferroni, Benjamini-Hochberg, \dots) is a data manipulation process-- an algorithm-- that guarantees that a preselected error rate is no larger than a preselected value. A typical procedures will actually offer guarantees vis-\`a-vis several error measures simultaneously. 
+The emphasis of this manuscript is however on the error rates, and not on the multiplicity control procedures themselves. 
 
 
-For the purpose of selecting the appropriate procedure consult your favorite software's documentation (see our appendix~\ref{sec:on_your_pc}). Alternatively, \citet{farcomeni_review_2008} can serve as a good reference. 
-p-value adjustment will not be discussed as it is procedure specific; it is the choice of a procedure that defines the p-value adjustment, and not the error rate itself.
-Simultaneous confidence intervals will, also, not be discussed.  
+For the purpose of selecting the appropriate procedure consult your favorite software's documentation (see our appendix~\ref{sec:on_your_pc}). Alternatively, \citet{farcomeni_review_2008} or more recently \citet{goeman_tutorial_2013}, can serve as  references. 
+As the focus of this paper is the error measures, p-value adjustment, simultaneous confidence intervals, and error estimation will not be discussed. The reader is reffered again to \cite{farcomeni_review_2008} or \cite{goeman_tutorial_2013} as possible references.
 
 
 \section{\label{sec:measures_of_error}Measures of Error}
@@ -113,7 +113,7 @@ Table~\ref{tab:event_notation} introduces the nomenclature which has become stan
 \subsubsection{Weak and Strong Control the Family Wise Error Rate}
 The probability of any particular inference procedure of making a false finding depends on the existence of true effects. FWER control in the ``weak'' sense refers to procedures which guarantee low FWER when there are no true effects at all, i.e., when all null hypotheses are correct. 
 
-Detecting the existence of \emph{any} phenomena ($m_1>1$?) is a simpler task that actually identifying these phenomena. Lack of weak FWER control means that we have no error guarantees even regarding this simple task. 
+Detecting the existence of \emph{any} phenomena ($m_1>1$) is a simpler task that actually identifying these phenomena. Lack of weak FWER control means that we have no error guarantees even regarding this simple task. 
 As mentioned in Section~\ref{sec:introduction}, a multiplicity control procedure might offer guarantees with respect to several error measure simultaneously. Weak FWER control should, and typically is, a minimal requirement. 
 
 FWER control in the ``strong'' sense is the complementing concept, referring to procedures which guarantee FWER control even in the presence of some true effects, i.e., when not all null hypotheses are correct. 
@@ -157,7 +157,7 @@ This measure is the simple (expected) number of erroneous discoveries.
 \item $k$-FWER \citep{van_der_laan_augmentation_2004}: Where $C(k) = I_{\{ V \geq k \} }$.\\
 This measure is the relative frequency of the making of no less than $k$ erroneous discoveries.
 
-\item False Discovery Excedance (FDX)\citep{genovese_exceedance_2006}: Where $C(\gamma) = I_{\{ V/R \geq \gamma \} }$.\\
+\item False Discovery Exceedance (FDX)\citep{genovese_exceedance_2006}: Where $C(\gamma) = I_{\{ V/R \geq \gamma \} }$.\\
 This measure was motivated by the fact that FDR keeps the proportion of false discoveries small, but only \emph{on average}. 
 In extreme scenarios, FDR does not exclude the possibility of making more than $FDP>\alpha$ mistakes in \emph{almost all} experiments. FDX targets these scenarios explicitly, by allowing it to happen with a small probability, and is thus more conservative than FDR. 
 
@@ -193,12 +193,13 @@ All the previous error measures are defined for a family of hypotheses that is k
 
 
 
-\subsection{Tukey's Psychological Exams}
-In his 1953 unpublished paper: ``The Problem of Multiple Comparisons'' \citep{benjamini_john_2002} and later, when lecturing at Princeton University \citep{donoho_higher_2004}, Prof. John Tukey would tell a motivating tale about a young psychologist. After administering 250 tests he finds that 11 were significant at the 0.05 level. After the initial feeling of satisfaction he consults a senior researcher, only to discover his findings are rather poor, since one  would expect 12.5 significant tests due to chance alone. Having only 11 significant results is actually disappointing.
+\subsection{\label{sec:tukey_exams}Tukey's Psychological Exams}
+In his 1953 unpublished paper: ``The Problem of Multiple Comparisons'' \citep{benjamini_john_2002} and later, when lecturing at Princeton University \citep{donoho_higher_2004}, Prof. John Tukey would tell a motivating tale about a young psychologist. After administering 250 tests he finds that 11 were significant at the 0.05 level. A null hypothesis being that a given test does not differentiate between his groups of interest, a (significant) rejection of this null means a test does actually differentiate the groups.
+After the initial feeling of satisfaction he consults a senior researcher, only to discover his findings are rather poor, since one  would expect 12.5 significant tests due to chance alone. Having only 11 significant results is actually disappointing.
 
 
 With this new understanding, our psychologist now has to decide how he can protect himself from false findings. 
-Say the tests consist of new candidate clinical diagnostics for condition X. Making an error means that a test will be used to diagnose X while it actually cannot distinguish between healthy and X. Since this is unacceptable for our psychologist, he will want an inference procedure that controls the FWER in the strong sense. 
+Say the tests consist of new candidate clinical diagnostics for condition X. Making an error means that a test will be used to diagnose X while it actually cannot distinguish between healthy and X. Since this is unacceptable for our psychologist, he will want an inference procedure that controls the FWER in the strong sense. This will also guarantee protection  in the case that there is no test that differentiates between healthy and X, i.e., weak FWER control, which can actually be a question of interest for itself.
 
 
 Now consider a different scenario: The tests check for differences in personality attributes between genders. Making an error means that the psychologist might believe male and female differ in a way they actually do not. The researcher does not consider this a serious mistake, as long as many other true differences are discovered. In this setup, the researcher should control the FDR -- probably using the Benjamini-Hochberg procedure \citep{benjamini_controlling_1995}. Allowing for some mistakes will allow the researcher to enjoy a sensitivity gain compared to FWER-controlling-procedures. The interpretation of the findings should be done in accord with the error measure employed.
@@ -206,6 +207,7 @@ Now consider a different scenario: The tests check for differences in personalit
 
 \subsection{\label{sec:anova}ANOVA}
 In their \citeyear{williams_controlling_1999} paper, \citeauthor*{williams_controlling_1999}, analyze the National Assessment of Educational Progress (NAEP) 1990 and 1992 data. This data consists of the average eighth grade mathematics proficiency scores for the 34 states that participated in both 1990 and 1992 NAEP Trial State Assessment (TSA). Comparisons are made between regions (Central, Northeast, Southeast and West), years (1990,1992), states nested within regions, and the Year~$\times$~Region interaction. 
+In this case a null hypothesis means there is no difference in the proficiency score between sub-groups, and its rejection meaning there is indeed such a difference.
 
 We start by noting that this one study, provides four families of hypotheses. Indeed, a falsely discovered difference between regions, as an example, is of no concern when comparing years, states or regional changes.
 
@@ -222,7 +224,7 @@ So why FWER? If, for example, the study is analyzed in the context of discrimina
 
 \subsection{\label{sub:fMRI}Functional Magnetic Resonance Imaging}
 
-Consider now the case of the neuroscientist, trying to locate the brain regions responsive to visual stimuli. He has scanned a dozen subjects or so in the Magnetic Resonance Imaging (MRI) machine and recorded the brain's activation\footnote{ He actually measured the blood oxygenation level. Details can be found in \cite{lazar_statistical_2008}.} in response to the stimuli. To be precise, he measured the activation level at \emph{each} of several thousand brain locations, called Volumetric Picture Elements (voxels); their exact number depending on the resolution of the MRI scan . With the measured activation levels in hand, the researcher can compute their correlation to the stimulus given. If the voxel-wise measurement is correlated with the stimulus, the location is considered ``active''. We see that localizing activation actually consists of performing many local hypothesis tests: the null hypothesis of no correlation to the stimulus is tested at each voxel.
+Consider now the case of the neuroscientist, trying to locate the brain regions responsive to visual stimuli. He has scanned a dozen subjects or so in the Magnetic Resonance Imaging (MRI) machine and recorded the brain's activation\footnote{ He actually measured the blood oxygenation level. Details can be found in \cite{lazar_statistical_2008}.} in response to the stimuli. To be precise, he measured the activation level at \emph{each} of several thousand brain locations, called Volumetric Picture Elements (voxels); their exact number depending on the resolution of the MRI scan . With the measured activation levels in hand, the researcher can compute their correlation to the stimulus given. If the voxel-wise measurement is correlated with the stimulus, the location is considered ``active''. We see that localizing activation actually consists of performing many local hypothesis tests: the null hypothesis of no correlation to the stimulus is tested at each voxel, and its rejection meaning a responsive location has been found.
 
 Returning to multiplicity error rates; an error would mean the researcher declared a voxel as responsive when it actually is not. This does not seem like a terrible mistake to make, so the researcher should probably protect himself from large proportions of errors, and not from the making of one single error. FWER, k-FWER and Per Family Error Rate are thus excluded. Per Comparison Error Rate seems like a possible candidate, but it is very liberal. One can actually gain power by including many ``junk'' hypotheses. To see this, consider the case of infinitely many hypotheses tested. The proportion of errors will trivially be smaller than any $\alpha$ we pick. Our researcher is thus left with FDR and FDX as candidates for measurement of error. 
 In the case the researcher has no clear favorite from within these two measures, a possible consideration at this stage might be the availability, simplicity and power of controlling procedures. These considerations give preference, at the time of writing, to FDR over FDX. 
@@ -237,13 +239,13 @@ Alternatively, if the researcher wishes to allow for some slack and accept false
 
 
 \subsubsection{Functional Magnetic Resonance Imaging-- Clinical Scan}
-Return again to the neuroscientist from sec~\ref{sub:fMRI}. This time his patient is about to enter surgery, for the removal of a brain tumour. The patient will be scanned in the fMRI in order to localize the speech regions, as the tumor is residing nearby and the surgeon needs to be extra-careful around these regions. This is a case where type $II$ errors are, arguably, more important than type $I$ errors: underestimating the speech region might cost the patient his verbal skills; overestimating it, might cost him an extra surgery or a recurring tumor. None of the error measures presented until now is concerned with false negatives. Referring to the terminology in Table~\ref{tab:event_notation}, our neuroscientist would probably be interested in something like $E(T/(m-R))$, which captures the sensitivity of the inference. This measure is the False Non Detection Rate (FNR) \citep{genovese_operating_2002}. We have not presented this measure yet, as it is concerned with the \emph{non-detections}. We shall revisit it in the context of power in Section~\ref{sec:power}. 
+Return again to the neuroscientist from sec~\ref{sub:fMRI}. This time his patient is about to enter surgery, for the removal of a brain tumor. The patient will be scanned in the fMRI in order to localize the speech regions, as the tumor is residing nearby and the surgeon needs to be extra-careful around these regions. This is a case where type $II$ errors are, arguably, more important than type $I$ errors: underestimating the speech region might cost the patient his verbal skills; overestimating it, might cost him an extra surgery or a recurring tumor. None of the error measures presented until now is concerned with false negatives. Referring to the terminology in Table~\ref{tab:event_notation}, our neuroscientist would probably be interested in something like $E(T/(m-R))$, which captures the sensitivity of the inference. This measure is the False Non Detection Rate (FNR) \citep{genovese_operating_2002}. We have not presented this measure yet, as it is concerned with the \emph{non-detections}. We shall revisit it in the context of power in Section~\ref{sec:power}. 
 
 
 
 
 \subsection{\label{sec:GWAS}Genome Wide Association Studies}
-In a typical Genome Wide Association Study (GWAS) the geneticist will record the genetic information of many subjects (genotyping) with the aim of discovering associations between the genotype and the individuals' attributes (phenotype). Assuming a univariate phenotype, the researcher will perform some sort of regression between the phenotype and genetic attributes (titled single nucleotide polymorphism-- SNP). With today's technology, the number of SNPs considered in a typical GWAS is hundreds of thousands. To declare an association, a researcher will try to reject the no association hypothesis between \emph{each} SNP and the phenotype, leading to the simultaneous testing of several hundreds of thousands of hypotheses. 
+In a typical Genome Wide Association Study (GWAS) the geneticist will record the genetic information of many subjects (genotyping) with the aim of discovering associations between the genotype and the individuals' attributes (phenotype). Assuming a univariate phenotype, the researcher will perform some type of regression between the phenotype and genetic attributes (titled single nucleotide polymorphism-- SNP). With today's technology, the number of SNPs considered in a typical GWAS is hundreds of thousands. To declare an association, a researcher will try to reject the no association null hypothesis between \emph{each} SNP and the phenotype, leading to the simultaneous testing of several hundreds of thousands of hypotheses. 
 Since the researcher does not concern himself with the making of a single mistake, as long as other associations discovered as true, he should choose FDR control or one of its relatives discussed in Section~\ref{sec:power}. 
 That said, it is also very common in GWAS, to use a p-value threshold of $10^{-7}$. This threshold is intended for FWER control, when searching over $500,000$ SNPs and using the Bonferonni procedure \cite{bush_chapter_2012} for FWER control. 
 
@@ -259,7 +261,7 @@ In this example, the researcher is looking for associations between SNPs and thr
 The options being (a) accounting for errors only within each experiment, leading to three families of hypotheses, or (b) global error accounting, leading to a single family. 
 
 Both approaches have their advantages and disadvantages. 
-By keeping the experiments separate we gain power but the global error rate is no longer $\alpha$. \citet{yekutieli_hierarchical_2008} has conjectured, and proven for some cases, that under strategy (a) with $\alpha$ level FDR control within each experiment, then the \emph{global} FDR should actually be close to 
+By keeping the experiments separate we gain power but the global error rate is no longer $\alpha$. \citet{yekutieli_hierarchical_2008} has approximated, for some cases, that under strategy (a) with $\alpha$ level FDR control within each experiment, then the \emph{global} FDR should actually be close to 
 \begin{equation} 
 	FDR \approx \alpha \cdot \frac{\text{Total discoveries} + 
 	\text{No. of experiments}}{\text{Total discoveries}+1} \label{eq:families_FDR}
@@ -318,71 +320,29 @@ The details can be found in \cite{benjamini_adjusting_2013}.
 
 \section{Simultaneous versus Selective Inference}
 Up to this point, we have motivated the choice of error measure by a mere ``error accounting''. 
-There is actually another motivation, which can make the choice of the error measure quite obvious once it has been recognized. 
-We demonstrate this on the GWAS example from Section~\ref{sec:GWAS}. 
-Also, in the spirit of \citet[sec.5]{scott_exploration_2006}, we introduce a possible financial consideration: selected SNPs will be sent for further investigation, so they can possibly be selected on the basis of future expected expenses, which are incurred if no association is found in the followup investigation.
-We emphasize that the computation of the expected expenses is data driven, and refer to \cite{scott_exploration_2006} for details.
+There is actually another perspective, which can make the choice of the error measure quite obvious once it has been recognized. As put by \citet{cox_remark_1965}:
+\begin{quote}\em
+It might be better to talk about the problem of selected comparisons rather than about the problem of multiple comparisons.
+\end{quote}
 
-Consider the following four scenarios:
+Cox's insight was that desiring the making statements on the truthfulness of a subset of selected hypotheses, and making statements about the simultaneous correctness of a subset of hypotheses are not the same thing. Think in terms of replicability: replicating a combination of phenomena is not the same as replicating each separately.
+Naturally, the simultaneous truthfulness of the selected hypotheses, entails the truthfulness of each and every one of them. Thus, simultaneous inference is the more ambitious and entails  selective inference.
+In  Cox's words \cite{cox_remark_1965}:
+\begin{quote}\em
+The fact that a probability can be calculated for the simultaneous correctness of a large number of statements does not usually make that probability relevant for the measurement of
+the uncertainty of one of the statements. If we are directly interested in a single statement about the vector parameter, the probability of simultaneous correctness would, however, be appropriate. The practical usefulness of the multiple comparison techniques then usually lies in giving a conservative bound for the effect of selection, rather than in giving an "exact" solution.
+\end{quote}
 
-\begin{scenario}
-A researcher searching for significant associations, concerned with the proportion of experiments that will lead him to a false finding on any particular SNP.
-\label{e.g.:marginal_noSelection}
-\end{scenario}
+Armed with the distinction between simultaneous and selective inference, we can relate error measures to inference types. 
+Simultaneity ambitions are only satisfied with FWER control. This is simply because allowing any errors to filtrate, ruins the truthfulness of the combination of claims.
+For the purpose of selective inference, one can consider FDR, FDX, or pFDR, which guarantee a small quantity of errors within the statements made, but not their simultaneity.
 
-\begin{scenario}
-A researcher searching for significant associations, concerned with the proportion of experiments that will lead him to a false finding on any combination of SNPs.
-\label{e.g.:simultanous_noSelection}
-\end{scenario}
-
-\begin{scenario}
-A researcher searching for significant associations, concerned with the proportion of experiments that will lead him to a false finding on any on any particular SNP which has showed low expected expenses.
-\label{e.g.:marginal_Selection}
-\end{scenario}
-
-\begin{scenario}
-A researcher searching for significant associations, concerned with the proportion of experiments that will lead him to a false finding on any combination of SNPs which have showen low expected expenses.
-\label{e.g.:simultanous_Selection}
-\end{scenario}
+Demonstrating using the examples: 
+The background in Tukey's psychological exams from Section~\ref{sec:tukey_exams} was too vague to determine which inference type is appropriate. Both can be advocated. 
+The same goes for the NAEP example from Section~\ref{sec:anova}. 
+Assuming the neuroscientist from the fMRI example in Section~\ref{sec:fMRI} cares of the truthfulness of each detected location, and not their particular combination, this is a case of selective inference. A similar consideration holds for the case of associated SNPs in the GWAS example in Section~\ref{sec:GWAS} and $\{SNP\} \times \{voxel\}$ associations in Section~\ref{eg:imaging_genetics}.
 
 
-For clarification Table~\ref{tab:simultanous_vs_selective} offers their classification with respect to two criteria: 
-(a) Is there a preliminary selection stage? In this case, selecting SNPs according to an expected loss.
-(b) Are errors accounted per finding or per combination of findings? In this case, SNP or per combination of SNPs.
-
-\begin{table}[h]
-  \centering
-    \caption{Classification of types of inference}
-\begin{tabular}{|c|c|c|}
-\hline \rule[-1ex]{0pt}{1.5ex}    & Simultaneous Inference & Marginal Inference \\ 
-\hline
-\hline \rule[-1ex]{0pt}{1.5ex}  With Selection & Scenario~\ref{e.g.:simultanous_Selection} & Scenario~\ref{e.g.:marginal_Selection} \\ 
-\hline \rule[-1ex]{0pt}{1.5ex}  No Selection &  Scenario~\ref{e.g.:simultanous_noSelection} & Scenario~\ref{e.g.:marginal_noSelection} \\ 
-\hline 
-\end{tabular} 
-  \label{tab:simultanous_vs_selective}
-\end{table}
-
-These distinctions are of practical importance as they immediately suggest the appropriate measure of error. 
-
-Scenario~\ref{e.g.:marginal_noSelection} is a case of many independent decisions, which does not need any correction for the multitude of hypotheses tested. 
-
-Scenario~\ref{e.g.:simultanous_noSelection} is a classic simultaneous inference problem which calls for strong FWER control.
-
-Scenario~\ref{e.g.:marginal_Selection} is a selective-inference problem.  Strong FWER control is a possible error measure; as it protects from \emph{any} combination of false findings, it naturally protects from the particular combination which passed the selection stage. This, however, is a conservative approach: why protect from all possible combinations if we only need protection from the combinations of selected SNPs\footnote{ This is analogous to the over-protection of using a Scheffe correction in ANOVA, which offers protection against all possible contrasts, even if we consider only a small subset of possible contrasts. See [find citation] for details.}? 
-FDR or FDR as good error measures for this scenario, although the exact procedure to be used needs to be tailored for the particular selection used. [cite example?]
-
-Scenario~\ref{e.g.:simultanous_Selection} is a simultaneous selective-inference problem.  
-Requiring \emph{simultaneous} inference sets the bar, which is satisfied only by FWER. 
-The presence of the selection, however, makes most off-the-shelf FWER controlling procedures overly conservative, so that tailoring the procedure for the particular selection in use might provide a power gain. [cite example?]
-
-\begin{remark}
-The financial aspect of the selection mechanism is immaterial. It was merely selected to demonstrate a data-driven selection stage preceding a hypothesis testing stage.
-\end{remark}
-
-\begin{remark}
-The concepts of simultaneous versus selective inference, is typically demonstrated on post-selection confidence intervals~\cite{benjamini_false_2005}. We did not use this type of example as we wished to focus on testing problems. 
-\end{remark}
 
 
 
@@ -399,13 +359,16 @@ The concepts of simultaneous versus selective inference, is typically demonstrat
 The reader might have noticed that the different error measures in Section~\ref{sec:measures_of_error} care only of the number of discoveries and false discoveries. Our interest in detection sensitivity is naturally implicit in the procedures researchers employ. Otherwise, never rejecting any null hypothesis, will trivially control all of the error types in Section~\ref{sec:measures_of_error}. 
 Power can benefit from (a) knowledge of the proportion of signals in the noise ($ 1 - m_0 / m $) or (b) from an introduction the expected deviations from the null hypotheses. 
 
-To demonstrate (a), consider two researchers doing the same research. The first, which did some more reading on the topic, knows with complete certainty that there are 10 false null hypotheses (signals) in his 100 hypotheses tests. The second, being less through, has no access to this knowledge. Naturally, the first can exploit this information and start worrying about errors only after the $10$th rejection. The second researcher, will have to be more conservative.
+To demonstrate (a), consider two researchers doing the same research. The first, which did some more reading on the topic, knows with complete certainty that there are 10 false null hypotheses (signals) in his 100 hypotheses tests. The second, being less through, has no access to this knowledge. 
+Naturally, the first can exploit this information. As a trivial example, he will know that  more than $10$ rejections will certainly contain errors. 
 
 To demonstrate (b), consider a scenario where the researcher is certain that if an effect exists, it would be of magnitude $\pm 7$ (in some arbitrary scale, say z-values). Performing a one-sample $z$ or $t$ test, while ignoring this belief, will lead the researcher to reject all hypotheses with large (absolute) effects. Particularly, an effect of, say 20,  will be considered very extreme, with infinitesimally small p-values. But, when considering the fact that effects are expected to be near 7, the researcher might actually prefer to reject effects near 7 \emph{before} he rejects effects near 20. In  statistical terminology, this is simply an underpowered test constructed for the wrong alternative hypothesis. 
 
-Specifying the expected deviation from the null for each hypothesis tested is no easy task. There exist however, several procedures which use the multitude of hypotheses tested in an attempt to empirically characterize the deviations from the null~\footnote{ Under mild assumptions regarding the form these deviations might take.}, and harness this information to gain power. Essentially all rely on estimators of the probability of a hypothesis being a true null given the value of some test statistic $z_i$. This is the posterior probability of the null, also named ``local fdr'' and denoted by $fdr(z_i)$. Details can be found in \cite{efron_microarrays_2008}. 
+Specifying the expected deviation from the null for each hypothesis tested is no easy task. There exist however, several procedures which use the multitude of hypotheses tested in an attempt to empirically characterize the deviations from the null~\footnote{ Under mild assumptions regarding the form these deviations might take. Essentially assuming that deviations from the null are not uniformly dispersed but rather tend to clump together.}, and harness this information to gain power. Essentially all rely on estimators of the probability of a hypothesis being a true null given the value of some test statistic $z_i$. This is the posterior probability of the null, also named ``local fdr'' and denoted by $fdr(z_i)$. Details can be found in \cite{efron_microarrays_2008}. 
+
 
 This magnitude-- the probability of being null given the data-- is not an error rate but rather a test statistic. It is however a rather intuitive test statistic. So much so that many authors set the rejection criterion to, say, $fdr(z_i)\leq 0.2$. This lends itself to the interpretation that results with frequencies smaller than 1 in 5, under the null assumption, are ``dangerously prone to wasting investigators' resources''~\cite{efron_microarrays_2008}. 
+
 
 \citet{storey_positive_2003} establishes a relation between $fdr(z_i)$ and the Marginal FDR from Section~\ref{sec:other_measures} so that a researcher opting for the $fdr(z_i)\leq 0.2$ criterion, can receive some sense of how many errors per discovery he will be doing on average.  The relation is data dependent. In the problem analyzed by \citet{efron_microarrays_2008}, rejecting for $fdr(z_i)\leq 0.2$, is approximately equivalent to marginal FDR control of $0.1$.
 This relation is even more appealing, since with a growing number of hypotheses being tested, the marginal FDR is a good approximation of the FDR. 
@@ -424,6 +387,9 @@ The different procedures aimed at satisfying these error functions typically use
 The search for procedures with desirable properties under errors measures such as eq~\ref{eq:compound_1}  - eq~\ref{eq:compound_3}, is ongoing. It is an active field of investigation with beautiful theory, developed either by the Multiple Comparisons Community or borrowing from statistical decision theory \cite[see][]{sun_oracle_2007}. The analysis of the finite-sampling properties of suggested procedures with respect to some desirable error measures is not an easy task.  For a complete treatment, and state of the art procedures, the reader is referred to \cite{efron_large-scale_2010}.
 
 
+\begin{remark}
+Assigning a \emph{posterior} probability to a hypothesis being null requires also asigning a \emph{prior} probability to this event. The interpreation of this probability has raised some controversy \cite[e.g.][]{morris_comment:_2008} as it can be seen as a statement of subjective belifs, of sampling frequencies or merely as descriptive. Setteling this interpretation issue is outside the scope of this manuscript.
+\end{remark}
 
 
 
@@ -443,7 +409,7 @@ The search for procedures with desirable properties under errors measures such a
 \appendix
 
 \section{\label{sec:on_your_pc} On Your Computer}
-It does not suffice to choose an error measure in order to perform an analysis. An error-controlling procedure will also have to be chosen, and this is what you should look for in your favorite software. This might be a general purpose statistical suite, or a problem-specific application. In the latter case, we have little to suggest, as domain specific applications typically implement the procedures popularised in that field. 
+It does not suffice to choose an error measure in order to perform an analysis. An error-controlling procedure will also have to be chosen, and this is what you should look for in your favorite software. This might be a general purpose statistical suite, or a problem-specific application. In the latter case, we have little to suggest, as domain specific applications typically implement the procedures popularized in that field. 
 In the brain imaging example, popular software include SPM, Brain Voyager, FSL, AFNII. All incorporate the multiplicity control procedure preferred by their authors (thus implicitly, the error measure). 
 In the GWAS example, the same occurs in software such as Plink, PRESTO, PERMORY and others. 
 General purpose statistical software are built for flexibility in the analysis, and thus incorporate more multiplicity control procedures. 
