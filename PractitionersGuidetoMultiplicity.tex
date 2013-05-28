@@ -125,7 +125,7 @@ As their names imply, ``strong'' control is the stricter criterion, which entail
 \subsection{\label{sub:fdr}False Discovery Rates}
 
 The False Discovery Rate (FDR), first introduced by \citet{benjamini_controlling_1995}, is the ratio between false discoveries and total discoveries, averaged over replicated experiments. 
-Denoting the (unknown) False Discovery Proportion (FDP) in a particular experiment using a particular data set as $ FDP=V/R $, and setting the convention that no discoveries signify no errors ($R=0 \Rightarrow FDP=0$), the FDR can be now defined as:
+Denoting the (unknown) False Discovery Proportion in a particular experiment using a particular data set as $ FDP=V/R $, and setting the convention that no discoveries signify no errors ($R=0 \Rightarrow FDP=0$), the FDR can be now defined as:
 $$E \left( FDP \right)$$ 
 where $E(.)$ denotes the average over all possible experimental results.
 
@@ -142,7 +142,7 @@ In the context of FDR, there need not be an $\alpha=0.05$ convention. Researcher
 
 
 \subsection{\label{sec:other_measures}Other Measures of Error}
-FWER and FDR are the most commonly used, but by no means the only measures of error. Since many error measures are merely an average over replications of the experiment, many other error measures can be considered by replacing the error function to be averaged. Denoting by $E(C)$ the average, over all possible experiments outcomes, of some error $C$. We now see that FWER and FDR simply set  $C = I_{\{ V \geq 1 \} } $ and $C = FDP$ respectively.
+FWER and FDR are the most commonly used, but by no means the only measures of error. Since many error measures are merely an average over replications of the experiment, many other error measures can be considered by replacing the error function to be averaged. Denoting by $E(C)$ the average, over all possible experimental outcomes, of some error $C$. We now see that FWER and FDR simply set  $C = I_{\{ V \geq 1 \} } $ and $C = FDP$ respectively.
 Some other measures of error are:
 
 
@@ -199,10 +199,11 @@ After the initial feeling of satisfaction he consults a senior researcher, only 
 
 
 With this new understanding, our psychologist now has to decide how he can protect himself from false findings. 
-Say the tests consist of new candidate clinical diagnostics for condition X. Making an error means that a test will be used to diagnose X while it actually cannot distinguish between healthy and X. Since this is unacceptable for our psychologist, he will want an inference procedure that controls the FWER in the strong sense. This will also guarantee protection  in the case that there is no test that differentiates between healthy and X, i.e., weak FWER control, which can actually be a question of interest for itself.
+Say the tests consist of new candidate clinical diagnostics for condition X. Making an error means that a test will be used to diagnose X while it actually cannot distinguish between healthy and X. Since this is unacceptable for our psychologist, he will want an inference procedure that controls the FWER in the strong sense. This will also guarantee protection  in the case that no test differentiates between healthy and X, i.e., weak FWER control, which can actually be a question of interest for itself.
 
 
-Now consider a different scenario: The tests check for differences in personality attributes between genders. Making an error means that the psychologist might believe male and female differ in a way they actually do not. The researcher does not consider this a serious mistake, as long as many other true differences are discovered. In this setup, the researcher should control the FDR -- probably using the Benjamini-Hochberg procedure \citep{benjamini_controlling_1995}. Allowing for some mistakes will allow the researcher to enjoy a sensitivity gain compared to FWER-controlling-procedures. The interpretation of the findings should be done in accord with the error measure employed.
+Now consider a different scenario: The tests check for differences in personality attributes between genders. Making an error means that the psychologist might believe male and female differ in a way they actually do not. The researcher does not consider this a serious mistake, as long as many other true differences are discovered. In this setup, the researcher should control the FDR, FDX or pFDR. 
+Allowing for some mistakes will allow the researcher to enjoy a sensitivity gain compared to FWER-controlling-procedures. The interpretation of the findings should be done in accord with the error measure employed.
 
 
 \subsection{\label{sec:anova}ANOVA}
@@ -212,8 +213,9 @@ In this case a null hypothesis means there is no difference in the proficiency s
 We start by noting that this one study, provides four families of hypotheses. Indeed, a falsely discovered difference between regions, as an example, is of no concern when comparing years, states or regional changes.
 
 We also note that in their paper, the authors actually compare between procedures controlling the FWER and the FDR. They do not offer a justification for the preference of any measure over the others, so we will offer one of our own. We will remark however, that their bottom line is unorthodox in the context of ANOVA: 
-\begin{quote}
-Each of the three authors believes that the B-H procedure is the best available choice--- \citeauthor*{williams_controlling_1999}
+\begin{quote}\em 
+Each of the three authors believes that the B-H procedure is the best available choice
+%--- \citeauthor*{williams_controlling_1999}
 \end{quote}
 
 So why FWER? If, for example, the study is analyzed in the context of discrimination-- having no policy implications but rather a possible stigmatizing effect-- the researcher might wish to refrain from any falsely discovered differences between states, regions etc. If, on the other hand, intervention policies are the context, then power is a major concern. Missing a difference might mean policy makers are left unaware of the differences to be addressed. This context requires a less stringent error criterion than FWER, leading to the authors' stated preferences.
@@ -226,27 +228,41 @@ So why FWER? If, for example, the study is analyzed in the context of discrimina
 
 Consider now the case of the neuroscientist, trying to locate the brain regions responsive to visual stimuli. He has scanned a dozen subjects or so in the Magnetic Resonance Imaging (MRI) machine and recorded the brain's activation\footnote{ He actually measured the blood oxygenation level. Details can be found in \cite{lazar_statistical_2008}.} in response to the stimuli. To be precise, he measured the activation level at \emph{each} of several thousand brain locations, called Volumetric Picture Elements (voxels); their exact number depending on the resolution of the MRI scan . With the measured activation levels in hand, the researcher can compute their correlation to the stimulus given. If the voxel-wise measurement is correlated with the stimulus, the location is considered ``active''. We see that localizing activation actually consists of performing many local hypothesis tests: the null hypothesis of no correlation to the stimulus is tested at each voxel, and its rejection meaning a responsive location has been found.
 
-Returning to multiplicity error rates; an error would mean the researcher declared a voxel as responsive when it actually is not. This does not seem like a terrible mistake to make, so the researcher should probably protect himself from large proportions of errors, and not from the making of one single error. FWER, k-FWER and Per Family Error Rate are thus excluded. Per Comparison Error Rate seems like a possible candidate, but it is very liberal. One can actually gain power by including many ``junk'' hypotheses. To see this, consider the case of infinitely many hypotheses tested. The proportion of errors will trivially be smaller than any $\alpha$ we pick. Our researcher is thus left with FDR and FDX as candidates for measurement of error. 
+Returning to multiplicity error rates; an error would mean the researcher declared a voxel as responsive when it actually is not. This does not seem like a terrible mistake to make, so the researcher should probably protect himself from large proportions of errors, and not from the making of one single error. FWER, k-FWER and Per Family Error Rate are thus excluded. Per Comparison Error Rate seems like a possible candidate, but it is very liberal. One can actually gain power by including many ``junk'' hypotheses, say, by including the air surrounding the head in the family. To see this, consider the case of infinitely many hypotheses tested. The proportion of errors will trivially be smaller than any $\alpha$ we pick. 
+
+Our researcher is thus left with FDR and FDX as candidates for measurement of error. 
 In the case the researcher has no clear favorite from within these two measures, a possible consideration at this stage might be the availability, simplicity and power of controlling procedures. These considerations give preference, at the time of writing, to FDR over FDX. 
+
+\begin{remark}
+For fairness it should be stated that ``cheating'' with FDR and FDR is possible, by augmenting the family with some obviously \emph{false} null hypotheses~\cite{finner_false_2001}. 
+It is our view that ``cheating'' the FDR or FDX does require more effort and malicious intent than analyzing a needlessly large brain volume. We thus do not qualify these two ``cheats'' as equally problematic.
+\end{remark}
 
 
 \subsubsection{Functional Magnetic Resonance Imaging-- Cluster Level Inference}
 
-Return to the neuroscientist from sec~\ref{sub:fMRI}. Recalling that the voxels are arbitrary volume units, defined by the technology of the MRI and not by entities of interest for inference, he decides that a more interesting entity is a mass of contiguous activations. He thus decides that he is interested in spatially contiguous regions with activation larger than ``7'' (in some scale). These regions are known as ``excursion regions'', ``excellence sets'', ``blobs'' and possibly other names. 
+Return to the neuroscientist from sec~\ref{sub:fMRI}. Recalling that the voxels are arbitrary volume units, defined by the technology of the MRI and not by entities of interest for inference, he decides that a more interesting entity is a mass of contiguous activations. He thus decides that he is interested in spatially contiguous regions with activation larger than ``7'' (in some scale). These regions are known as ``excursion regions'', ``exceedance sets'', ``blobs'' and possibly other names. 
 After scanning a subject, he realizes there are 30 contiguous regions which exceed 7. Conscious that some are  due merely to chance variation, and knowing enough probability theory, he computes a p-value for the observed volume (exceeding 7), in each of the 30 regions. If he rather not make any mistakes, he can control the FWER of the regions. Namely, controlling the probability of declaring any inactive regions as active. This is indeed the approach implemented in several brain analysis software packages, particularly SPM (\url{http://www.fil.ion.ucl.ac.uk/spm/}).
 
-Alternatively, if the researcher wishes to allow for some slack and accept false regions-- as long as their proportion is not too high-- he should use FDR control. Alas, the FDR defined in Section~\ref{sub:fdr} assumes an a priori fixed and known number of hypotheses being tested ($m$). The number of excursion regions is data dependent, thus random and a priori unknown. Extensions of the FDR for the random-number-of-hypothesis case do exist. A rigorous exposition can be found in  \citet{siegmund_false_2011}. Note however, that error-controlling \emph{procedures} for the random hypothesis case are not as abundant and studied as the fixed hypothesis case. The mathematical proofs would typically require some difficult to justify assumptions. Simulation performances however, do seem promising \citep{chumbley_false_2009,chumbley_topological_2010}.
+Alternatively, if the researcher wishes to allow for some slack and accept false regions-- as long as their proportion is not too high-- he should use FDR or FDX control. Alas, the FDR defined in Section~\ref{sub:fdr} assumes an a priori fixed and known number of hypotheses being tested ($m$). The number of excursion regions is data dependent, thus random and a priori unknown. Extensions of the FDR for the random-number-of-hypothesis case do exist. A rigorous exposition can be found in  \citet{siegmund_false_2011}. Note however, that error-controlling \emph{procedures} for the random hypothesis case are not as abundant and studied as the fixed hypothesis case. The mathematical proofs would typically require some difficult to justify assumptions. Simulation performances however, do seem promising \citep{chumbley_false_2009,chumbley_topological_2010}.
 
 
-\subsubsection{Functional Magnetic Resonance Imaging-- Clinical Scan}
-Return again to the neuroscientist from sec~\ref{sub:fMRI}. This time his patient is about to enter surgery, for the removal of a brain tumor. The patient will be scanned in the fMRI in order to localize the speech regions, as the tumor is residing nearby and the surgeon needs to be extra-careful around these regions. This is a case where type $II$ errors are, arguably, more important than type $I$ errors: underestimating the speech region might cost the patient his verbal skills; overestimating it, might cost him an extra surgery or a recurring tumor. None of the error measures presented until now is concerned with false negatives. Referring to the terminology in Table~\ref{tab:event_notation}, our neuroscientist would probably be interested in something like $E(T/(m-R))$, which captures the sensitivity of the inference. This measure is the False Non Detection Rate (FNR) \citep{genovese_operating_2002}. We have not presented this measure yet, as it is concerned with the \emph{non-detections}. We shall revisit it in the context of power in Section~\ref{sec:power}. 
+\section{Functional Magnetic Resonance Imaging-- Clinical Scan}
+Return again to the neuroscientist from sec~\ref{sub:fMRI}. This time his single patient is about to enter surgery for the removal of a brain tumor. 
+The patient will be scanned in the fMRI in order to localize the speech regions, as the tumor is residing nearby and the surgeon needs to be extra-careful around these regions. 
+In this clinical case there are different considerations than in basic scientific research. 
+Type $II$ errors are arguably more important than type $I$ errors: underestimating the speech region might cost the patient his verbal skills; overestimating it, might cost him an extra surgery or a recurring tumor. 
+None of the error measures presented until now is concerned with false negatives. 
+Referring to the terminology in Table~\ref{tab:event_notation}, our neuroscientist would probably be interested in something like $E(T/(m-R))$, which captures the sensitivity of the inference. 
+This measure is the False Non Detection Rate (FNR) \citep{genovese_operating_2002}. 
+We have not presented this measure yet, as it is concerned with the \emph{non-detections}. We shall revisit it in the context of power in Section~\ref{sec:power}. 
 
 
 
 
 \subsection{\label{sec:GWAS}Genome Wide Association Studies}
-In a typical Genome Wide Association Study (GWAS) the geneticist will record the genetic information of many subjects (genotyping) with the aim of discovering associations between the genotype and the individuals' attributes (phenotype). Assuming a univariate phenotype, the researcher will perform some type of regression between the phenotype and genetic attributes (titled single nucleotide polymorphism-- SNP). With today's technology, the number of SNPs considered in a typical GWAS is hundreds of thousands. To declare an association, a researcher will try to reject the no association null hypothesis between \emph{each} SNP and the phenotype, leading to the simultaneous testing of several hundreds of thousands of hypotheses. 
-Since the researcher does not concern himself with the making of a single mistake, as long as other associations discovered as true, he should choose FDR control or one of its relatives discussed in Section~\ref{sec:power}. 
+In a typical Genome Wide Association Study (GWAS) the geneticist will record the genetic information of many subjects (genotyping) with the aim of discovering associations between the genotype and the individuals' attributes (phenotype). Assuming a univariate phenotype, the researcher will perform some type of regression between the phenotype and each genetic attribute (titled single nucleotide polymorphism-- SNP). With today's technology, the number of SNPs considered in a typical GWAS is hundreds of thousands. To declare an association, a researcher will try to reject the no association null hypothesis between \emph{each} SNP and the phenotype, leading to the simultaneous testing of several hundreds of thousands of hypotheses. 
+Since the researcher does not concern himself with the making of a single mistake, as long as other associations discovered are true, he should choose FDR control or one of its relatives discussed in Section~\ref{sec:power}. 
 That said, it is also very common in GWAS, to use a p-value threshold of $10^{-7}$. This threshold is intended for FWER control, when searching over $500,000$ SNPs and using the Bonferonni procedure \cite{bush_chapter_2012} for FWER control. 
 
 So FDR or FWER? It is left for the researcher to decide, and it ultimately depends on the implications of declaring false associations. 
@@ -257,7 +273,7 @@ So FDR or FWER? It is left for the researcher to decide, and it ultimately depen
 
 \subsection{\label{sec:cross_validated}Cross Validated Example}
 
-In this example, the researcher is looking for associations between SNPs and three distinct\footnote{ It is actually implicit whether these are distinct phenotypes or not. I have assumed they are distinct, because of the ``subject overlap'' comment.} phenotypes. The error measure has already been selected. The family groupings are unclear. 
+In this example, the researcher is looking for associations between SNPs and three distinct\footnote{ It is actually implicit whether these are distinct phenotypes or not. We have assumed they are distinct, because of the ``subject overlap'' comment.} phenotypes. The error measure has already been selected. The family groupings are unclear. 
 The options being (a) accounting for errors only within each experiment, leading to three families of hypotheses, or (b) global error accounting, leading to a single family. 
 
 Both approaches have their advantages and disadvantages. 
@@ -283,18 +299,18 @@ The field of imaging genetics aims at finding the genetic attributes associates 
 The data included the genotyping and imaging of $N \approx 700$ individuals. 
 The genotype of each individual comprises information of $n_G \approx 400K$ SNPs. 
 The imaging data encodes the relative volume of each subject at $n_B \approx 30K$ voxels. 
-Testing for association between all $\{SNP\} \times \{voxel\}$ combinations, leads to $n_G \cdot n_B \approx 12B$ hypotheses. Should they all be considered one family of hypotheses? Or maybe each SNP (or voxel) is actually a separate family? 
+Testing for association between all $\{SNP\} \times \{voxel\}$ combinations, leads to $n_G \cdot n_B \approx 12\times10^9$ hypotheses. Should they all be considered one family of hypotheses? Or maybe each SNP (or voxel) is actually a separate family? 
 
 A researcher might want to infer which gene is associated with which location.
 A single family of hypotheses will include all $\{SNP\} \times \{voxel\}$ combinations. 
 FWER control over this family is out of the question. 
-FDR control means that the researcher is concerned with the proportion of false associations detected within all of the $\{SNP\} \times \{voxel\}$ associations found. This seems like a good criterion, except for the fact it requires correcting for $12B$ hypotheses. 
+FDR control means that the researcher is concerned with the proportion of false associations detected within all of the $\{SNP\} \times \{voxel\}$ associations found. This seems like a good criterion, except for the fact it requires correcting for $12\times10^9$ hypotheses. 
 Our researcher starts considering alternative error criteria. 
 A natural option might be SNP-wise testing, perhaps using the B-H procedure over all voxels within each SNP. Power is certainly gained as each family is corrected only for the $n_B$ voxels within it. 
 What about false findings? Sadly, this approach offers no error control. To see this, consider the case where there is only one voxel: this amounts to $n_G$ level $\alpha$ hypothesis tests, which is this initial multiplicity problem. 
 
-A more civilized solution might harness the hierarchy of the problem; that is, by selecting associated SNPs and localizing the association only for these selected SNPs. 
-Naturally, the multiplicity is alleviated since only selected SNPs will be passed for voxel-wise testing. However, if the same data is used for selecting the SNPs and then selecting the voxels, an $\alpha$ level FDR control within selected SNPs will still not guarantee an $\alpha$ level FDR control, across discovered $\{SNP\} \times \{voxel\}$ associations. This is actually a case of \emph{selective inference} \citep{benjamini_simultaneous_2010}, referred to by practitioners as ``data snooping'' or ``double dipping''. 
+A more justifiable solution might harness the hierarchy of the problem; that is, by selecting associated SNPs and localizing the association only for these selected SNPs. 
+Naturally, the multiplicity is alleviated since only selected SNPs will be passed for voxel-wise testing. However, if the same data is used for selecting the SNPs and then selecting the voxels, an $\alpha$ level FDR control within selected SNPs will still not guarantee an $\alpha$ level FDR control, across discovered $\{SNP\} \times \{voxel\}$ associations. This is actually a case of \emph{selective inference} \citep{benjamini_simultaneous_2010}, also referred to by practitioners as ``data snooping'' or ``double dipping''. 
 
 Having given it more thought, our researcher decides she wants a method that has two properties: 
 (a) controlling for the number of falsely discovered SNPs; and 
@@ -337,7 +353,7 @@ the uncertainty of one of the statements. If we are directly interested in a sin
 Armed with the distinction between simultaneous and selective inference, we can relate error measures to inference types. 
 
 Simultaneity ambitions are only satisfied with FWER control. This is simply because allowing any errors to filtrate, ruins the truthfulness of the combination of claims.
-For the purpose of selective inference, one can consider FDR, FDX, or pFDR, which guarantee a small quantity of errors within the statements made, but not their simultaneity.
+For the purpose of selective inference, one can consider FDR and its variants, which guarantee a small quantity of errors within the statements made, but not their simultaneity.
 
 Demonstrating using the examples: 
 The background in Tukey's psychological exams from Section~\ref{sec:tukey_exams} was too vague to determine which inference type is appropriate. Both can be advocated. 
@@ -362,11 +378,12 @@ The reader might have noticed that the different error measures in Section~\ref{
 Power can benefit from (a) knowledge of the proportion of signals in the noise ($ 1 - m_0 / m $) or (b) from an introduction the expected deviations from the null hypotheses. 
 
 To demonstrate (a), consider two researchers doing the same research. The first, which did some more reading on the topic, knows with complete certainty that there are 10 false null hypotheses (signals) in his 100 hypotheses tests. The second, being less through, has no access to this knowledge. 
-Naturally, the first can exploit this information. As a trivial example, he will know that  more than $10$ rejections will certainly contain errors. 
+Naturally, the first can exploit this information. As a trivial example, he will know that  more than $10$ rejections will certainly contain errors\footnote{ This does not mean that the first $10$ are necessarily true. Only that more than $10$ will certainly contain errors.}. 
 
 To demonstrate (b), consider a scenario where the researcher is certain that if an effect exists, it would be of magnitude $\pm 7$ (in some arbitrary scale, say z-values). Performing a one-sample $z$ or $t$ test, while ignoring this belief, will lead the researcher to reject all hypotheses with large (absolute) effects. Particularly, an effect of, say 20,  will be considered very extreme, with infinitesimally small p-values. But, when considering the fact that effects are expected to be near 7, the researcher might actually prefer to reject effects near 7 \emph{before} he rejects effects near 20. In  statistical terminology, this is simply an underpowered test constructed for the wrong alternative hypothesis. 
 
-Specifying the expected deviation from the null for each hypothesis tested is no easy task. There exist however, several procedures which use the multitude of hypotheses tested in an attempt to empirically characterize the deviations from the null~\footnote{ Under mild assumptions regarding the form these deviations might take. Essentially assuming that deviations from the null are not uniformly dispersed but rather tend to clump together.}, and harness this information to gain power. Essentially all rely on estimators of the probability of a hypothesis being a true null given the value of some test statistic $z_i$. This is the posterior probability of the null, also named ``local fdr'' and denoted by $fdr(z_i)$. Details can be found in \cite{efron_microarrays_2008}. 
+Specifying the expected deviation from the null for each hypothesis tested is no easy task. There exist however, several procedures which use the multitude of hypotheses tested in an attempt to empirically characterize the deviations from the null~\footnote{ Under mild assumptions regarding the form these deviations might take. Essentially assuming that deviations from the null are not uniformly dispersed but rather tend to clump together.}, and harness this information to gain power. 
+Essentially all rely on estimators of the probability of a hypothesis being a true null given the value of some test statistic $z_i$. This is the posterior probability of the null, also named ``local fdr'' and denoted by $fdr(z_i)$. Details can be found in \cite{efron_microarrays_2008}. Also see Remark~\ref{sec:baeysian_interpretation} on the existence and interpretation of this probability.
 
 
 This magnitude-- the probability of being null given the data-- is not an error rate but rather a test statistic. It is however a rather intuitive test statistic. So much so that many authors set the rejection criterion to, say, $fdr(z_i)\leq 0.2$. This lends itself to the interpretation that results with frequencies smaller than 1 in 5, under the null assumption, are ``dangerously prone to wasting investigators' resources''~\cite{efron_microarrays_2008}. 
@@ -389,8 +406,8 @@ The different procedures aimed at satisfying these error functions typically use
 The search for procedures with desirable properties under errors measures such as eq~\ref{eq:compound_1}  - eq~\ref{eq:compound_3}, is ongoing. It is an active field of investigation with beautiful theory, developed either by the Multiple Comparisons Community or borrowing from statistical decision theory \cite[see][]{sun_oracle_2007}. The analysis of the finite-sampling properties of suggested procedures with respect to some desirable error measures is not an easy task.  For a complete treatment, and state of the art procedures, the reader is referred to \cite{efron_large-scale_2010}.
 
 
-\begin{remark}
-Assigning a \emph{posterior} probability to a hypothesis being null requires also asigning a \emph{prior} probability to this event. The interpreation of this probability has raised some controversy \cite[e.g.][]{morris_comment:_2008} as it can be seen as a statement of subjective belifs, of sampling frequencies or merely as descriptive. Setteling this interpretation issue is outside the scope of this manuscript.
+\begin{remark}\label{sec:baeysian_interpretation}
+Assigning a \emph{posterior} probability to a hypothesis being null requires also assigning a \emph{prior} probability to this event. The interpretation of this probability has raised some controversy \cite[e.g.][]{morris_comment:_2008} as it can be seen as a statement of subjective beliefs, of sampling frequencies or merely as descriptive. Settling this interpretation issue is outside the scope of this manuscript.
 \end{remark}
 
 
@@ -451,7 +468,7 @@ In this glossary, we use as a reference the statistical nomenclature in Table~\r
 \hline \rule[-1ex]{0pt}{1.5ex} & $U/(m-R)$ & Negative Predictive Value  \\ 
 \hline \rule[-1ex]{0pt}{1.5ex} & $E(T)/m_1$ & Non Discovery Rate  \\ 
 \hline \rule[-1ex]{0pt}{1.5ex} & $T/m_1$ & Non Discovery Ratio  \\ 
-\hline \rule[-1ex]{0pt}{1.5ex} & $S/m_1$ & True Positive Ratio, Recall  \\ 
+\hline \rule[-1ex]{0pt}{1.5ex} & $S/m_1$ & True Positive Ratio, Recall, Average Power  \\ 
 \hline \rule[-1ex]{0pt}{1.5ex} & $U/m_1$ & Specificity, True Negative Ratio  \\ 
 \hline \rule[-1ex]{0pt}{1.5ex} & $E(U)/m_1$ & True Negative Rate  \\ 
 \hline \rule[-1ex]{0pt}{1.5ex} & $E(S/R)$ & True Positive Rate  \\ 
