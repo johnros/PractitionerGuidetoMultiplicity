@@ -15,8 +15,6 @@
 \usepackage[numbers]{natbib}
 %\bibpunct{[}{]}{,}{n}{}{;}
 
-
-
 %\newcommand*{\glossaryname}{Dictionary}
 %\usepackage[nonumberlist]{glossaries}
 %\newcommand{\dictentry}[2]{%
@@ -25,18 +23,14 @@
 %}
 %\makeglossaries
 
-
-
 \usepackage[hyphens]{url}
 \usepackage{hyperref}
 \usepackage{float}
 
-
-
 \DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `dirname #1`/`basename #1 .tif`.png}
+
 \doublespacing
 %\makeglossaries
-
 
 \theoremstyle{definition}
 \newtheorem{scenario}{Scenario}[section]
@@ -55,10 +49,14 @@
 %\date{}                                         
 
 
+\pagestyle{headings}
+
+
+
 
 
 \begin{document}
- \linenumbers
+% \linenumbers
  \maketitle
 
 
