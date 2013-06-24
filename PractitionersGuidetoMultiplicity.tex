@@ -1,3 +1,4 @@
+\RequirePackage{lineno} 
 \documentclass[review,12pt]{article}
 %\documentclass[12pt,draft]{amsart}
 %\usepackage{geometry}                % See geometry.pdf to learn the layout options. There are lots.
@@ -14,13 +15,15 @@
 \usepackage[numbers]{natbib}
 %\bibpunct{[}{]}{,}{n}{}{;}
 
-\newcommand*{\glossaryname}{Dictionary}
-\usepackage[nonumberlist]{glossaries}
-\newcommand{\dictentry}[2]{%
-  \newglossaryentry{#1}{name=#1,description={#2}}%
-  \glslink{#1}{}%
-}
-\makeglossaries
+
+
+%\newcommand*{\glossaryname}{Dictionary}
+%\usepackage[nonumberlist]{glossaries}
+%\newcommand{\dictentry}[2]{%
+%  \newglossaryentry{#1}{name=#1,description={#2}}%
+%  \glslink{#1}{}%
+%}
+%\makeglossaries
 
 
 
@@ -31,7 +34,7 @@
 
 
 \DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `dirname #1`/`basename #1 .tif`.png}
-%\doublespacing
+\doublespacing
 %\makeglossaries
 
 
@@ -55,14 +58,16 @@
 
 
 \begin{document}
-\maketitle
+ \linenumbers
+ \maketitle
 
 
 \section{\label{sec:introduction}Introduction}
 
 It is quite common in modern research for a researcher to test many hypotheses. 
 The statistical (frequentist) hypothesis testing framework does not scale with the number of hypotheses in the sense that na\"{i}vely performing many hypothesis tests will probably yield many false findings;  ``false'' in the sense they will not be replicated.
-Indeed, classical statistical ``significance'' is evidence for the presence of a signal within the noise expected in a single test, not in a multitude. 
+Indeed, classical statistical ``significance'' is evidence for the presence of a signal within the noise expected in a single test, not in a multitude where the noise levels are higher. 
+Strong evidence of signal assuming one noise level, can easily be considered as no evidence of signal under a higher noise level. 
 For protection from an uncontrolled number of erroneous findings, a researcher has to consider the type of errors, or non-replications, he wishes to avoid. The researcher can then select the adequate procedure for that particular error type and data structure, or alternatively estimate that error type for a particular set of candidate findings. 
 
 In practice, the selection of the proper error rate might cause the researcher some confusion. This point was made at the 2009 Multiple Comparisons conference in Tokyo \citep[][Section 4.4]{benjamini_simultaneous_2010}, demonstrated in the following question from the statistics Questions \& Answers web site \emph{Cross Validated}~\footnote{ See \url{http://stats.stackexchange.com/questions/26588/multiple-fdr-corrected-experiments-using-the-same-data}. Accessed on Apr 20, 2013}~:
@@ -91,7 +96,8 @@ As is customary in single hypothesis testing, a FWER level of $\alpha=0.05$ is o
 
 
 
-Table~\ref{tab:event_notation} introduces the nomenclature which has become standard in the multiple comparisons community and will be referenced throughout this article. Following this notation, the FWER is defined as $$Prob(V \geq 1 )$$ where $Prob(.)$ denotes the relative frequency over repeated experiments.
+Table~\ref{tab:event_notation} introduces the nomenclature which has become standard in the multiple comparisons community and will be referenced throughout this article. Following this notation, the FWER is defined as 
+$$Prob(V \geq 1 )$$ where $Prob(.)$ denotes the relative frequency over repeated experiments.
 
 
 
@@ -111,7 +117,7 @@ Table~\ref{tab:event_notation} introduces the nomenclature which has become stan
 
 
 \subsubsection{Weak and Strong Control the Family Wise Error Rate}
-The probability of any particular inference procedure of making a false finding depends on the existence of true effects. FWER control in the ``weak'' sense refers to procedures which guarantee low FWER when there are no true effects at all, i.e., when all null hypotheses are correct. 
+The probability of any particular inference procedure of making a false finding depends on the existence of true effects. FWER control in the ``weak'' sense refers to procedures which guarantee controlable FWER when there are no true effects at all, i.e., when all null hypotheses are correct. 
 
 Detecting the existence of \emph{any} phenomena ($m_1>1$) is a simpler task that actually identifying these phenomena. Lack of weak FWER control means that we have no error guarantees even regarding this simple task. 
 As mentioned in Section~\ref{sec:introduction}, a multiplicity control procedure might offer guarantees with respect to several error measure simultaneously. Weak FWER control should, and typically is, a minimal requirement. 
@@ -125,7 +131,7 @@ As their names imply, ``strong'' control is the stricter criterion, which entail
 \subsection{\label{sub:fdr}False Discovery Rates}
 
 The False Discovery Rate (FDR), first introduced by \citet{benjamini_controlling_1995}, is the ratio between false discoveries and total discoveries, averaged over replicated experiments. 
-Denoting the (unknown) False Discovery Proportion in a particular experiment using a particular data set as $ FDP=V/R $, and setting the convention that no discoveries signify no errors ($R=0 \Rightarrow FDP=0$), the FDR can be now defined as:
+Denoting the (unknown) False Discovery Proportion in a particular experiment as $ FDP=V/R $, and setting the convention that no discoveries signify no errors ($R=0 \Rightarrow FDP=0$), the FDR can be now defined as:
 $$E \left( FDP \right)$$ 
 where $E(.)$ denotes the average over all possible experimental results.
 
@@ -336,24 +342,26 @@ The details can be found in \cite{benjamini_adjusting_2013}.
 
 \section{Simultaneous versus Selective Inference}
 Up to this point, we have motivated the choice of error measure by a mere ``error accounting''. 
-There is actually another perspective, which can make the choice of the error measure quite obvious once it has been recognized. As put by \citet{cox_remark_1965}:
+There is actually another perspective, which can make the choice of the error measure quite obvious once it has been recognized. 
+As put by \citet{cox_remark_1965}:
 \begin{quote}\em
 It might be better to talk about the problem of selected comparisons rather than about the problem of multiple comparisons.
 \end{quote}
 
-Cox's insight was that making statements on the truthfulness of a subset of selected hypotheses, and making statements about the simultaneous correctness of a subset of hypotheses are not the same thing. 
+Cox's insight was that making statements on the truthfulness of a subset of selected hypotheses, and making statements about the simultaneous correctness of a subset of hypotheses is not the same thing. 
 Think in terms of replicability: replicating a combination of phenomena is not the same as replicating each separately.
 Naturally, the simultaneous truthfulness of the selected hypotheses, entails the truthfulness of each and every one of them. Thus, simultaneous inference is the more ambitious task.
 In  Cox's words \cite{cox_remark_1965}:
 \begin{quote}\em
 The fact that a probability can be calculated for the simultaneous correctness of a large number of statements does not usually make that probability relevant for the measurement of
-the uncertainty of one of the statements. If we are directly interested in a single statement about the vector parameter, the probability of simultaneous correctness would, however, be appropriate. The practical usefulness of the multiple comparison techniques then usually lies in giving a conservative bound for the effect of selection, rather than in giving an "exact" solution.
+the uncertainty of one of the statements. If we are directly interested in a single statement about the vector parameter, the probability of simultaneous correctness would, however, be appropriate. The practical usefulness of the multiple comparison techniques then usually lies in giving a conservative bound for the effect of selection, rather than in giving an ``exact'' solution.
 \end{quote}
 
 Armed with the distinction between simultaneous and selective inference, we can relate error measures to inference types. 
 
 Simultaneity ambitions are only satisfied with FWER control. This is simply because allowing any errors to filtrate, ruins the truthfulness of the combination of claims.
-For the purpose of selective inference, one can consider FDR and its variants, which guarantee a small quantity of errors within the statements made, but not their simultaneity.
+FDR is clearly a selective, and not simultaneous statement. It can be seen as the average truthfulness of the selected hypotheses. Put differently, FDR is actually controlling the PCER  within the selected hypothesis subset.
+FDX is also selective. It ensures a high proportion of truthful statements within the selected hypotheses. 
 
 Demonstrating using the examples: 
 The background in Tukey's psychological exams from Section~\ref{sec:tukey_exams} was too vague to determine which inference type is appropriate. Both can be advocated. 
@@ -361,7 +369,9 @@ The same goes for the NAEP example from Section~\ref{sec:anova}.
 Assuming the neuroscientist from the fMRI example in Section~\ref{sub:fMRI} cares of the truthfulness of each detected location, and not their particular combination, this is a case of selective inference. A similar consideration holds for the case of associated SNPs in the GWAS example in Section~\ref{sec:GWAS} and $\{SNP\} \times \{voxel\}$ associations in Section~\ref{eg:imaging_genetics}.
 
 
-
+\begin{remark}
+Although not the in scope of this manuscript, it is only appropriate to mention False Coverage Rate adjusted confidence intervals. These interval estimators, suggested by \citet{benjamini_false_2005}, make the distinction between selective and simultaneous clear. They are not simultaneous, as they do not offer joint coverage of the selected parameters. They do however offer a predefined average coverage over the \emph{selected} parameters.
+\end{remark}
 
 
 
@@ -422,9 +432,11 @@ Prof. Yoav Benjamini, Dr. Daniel Yekutieli, Dr. Jelle Goeman, Dr. Aldo Solari, K
 
 
 
-
 \bibliographystyle{plainnat}
+
 \bibliography{Project-PracticalGuideToMultiplicity}
+
+
 
 
 \appendix
